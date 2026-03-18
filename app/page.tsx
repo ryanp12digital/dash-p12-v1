@@ -5,6 +5,7 @@ import CostConversionsChart from "@/components/CostConversionsChart";
 import CampaignTable from "@/components/CampaignTable";
 import DevicePlacement from "@/components/DevicePlacement";
 import MultiMetricChart from "@/components/MultiMetricChart";
+import FunnelStacked from "@/components/FunnelStacked";
 import { Calendar, SlidersHorizontal, Download } from "lucide-react";
 
 export default function Home() {
@@ -66,6 +67,9 @@ export default function Home() {
 
         {/* Device + Placement */}
         <DevicePlacement />
+
+        {/* Funnel Chart */}
+        <FunnelStacked />
 
         {/* Multi-Metric Chart */}
         <MultiMetricChart />
