@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# next.js
+.next/
+out/
+
+# env
+.env
+.env*.local
+
+# claude local settings (may contain secrets)
+.claude/settings.local.json
+
+# misc
+credentials.json
+token.json
+.tmp/
+__pycache__/
+*.pyc
+.DS_Store
