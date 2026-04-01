@@ -192,6 +192,7 @@ export async function GET(req: Request) {
           spent,
           reach: x.reach,
           impressions: x.impressions,
+          linkClicks: x.linkClicks,
           ctr: typeof ctr === "number" && Number.isFinite(ctr) ? ctr : 0,
 
           cpc,

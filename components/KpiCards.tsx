@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { kpiData, type KpiRow, type KpiPlatform } from "@/lib/data";
 import { CircleHelp, TrendingUp, TrendingDown, Minus, GripVertical } from "lucide-react";
 import { IconMeta, IconGoogleAds, IconFacebook, IconInstagram } from "@/components/platform-icons";
@@ -221,6 +221,11 @@ function KpiGroup({
   const { t } = useDashboardSettings();
   const { rows, reorder } = useKpiOrder(section, initialRows);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -240,6 +245,23 @@ function KpiGroup({
     const oldIndex = rows.findIndex((r) => r.labelKey === active.id);
     const newIndex = rows.findIndex((r) => r.labelKey === over.id);
     reorder(arrayMove(rows, oldIndex, newIndex));
+  }
+
+  if (!mounted) {
+    return (
+      <div>
+        <h3 className="mb-3 text-[11px] font-bold tracking-wider text-[#64748b] uppercase">
+          {t(titleKey)}
+        </h3>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {rows.map((kpi, j) => (
+            <div key={kpi.labelKey} className={`group relative ${cardBase} ${cardHover}`} style={{ animation: `kpiSlideUp 0.45s ease both`, animationDelay: `${(animOffset + j) * 40}ms` }}>
+              <KpiCardContent kpi={kpi} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (

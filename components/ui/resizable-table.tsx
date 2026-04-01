@@ -65,27 +65,54 @@ export function ResizableTable<T>({
   const [sortKey, setSortKey] = useState<string | null>(defaultSort?.key ?? null);
   const [sortDir, setSortDir] = useState<ResizableTableSortDir>(defaultSort?.dir ?? "desc");
 
+  const columnsLayoutKey = useMemo(
+    () =>
+      columns
+        .map((c) => `${c.key}:${c.width}:${c.minWidth ?? 80}:${c.maxWidth ?? 600}`)
+        .join("|"),
+    [columns],
+  );
+
+  useEffect(() => {
+    setWidths((prev) => {
+      let changed = false;
+      const next = { ...prev };
+      for (const c of columns) {
+        if (!(c.key in next)) {
+          next[c.key] = c.width;
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, [columnsLayoutKey]);
+
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(storageKey);
       if (!raw) return;
       const parsed = JSON.parse(raw) as Record<string, unknown>;
       setWidths((prev) => {
+        let changed = false;
         const next = { ...prev };
         for (const c of columns) {
           const v = parsed[c.key];
           if (typeof v === "number" && Number.isFinite(v)) {
             const min = c.minWidth ?? 80;
             const max = c.maxWidth ?? 600;
-            next[c.key] = Math.max(min, Math.min(max, v));
+            const clamped = Math.max(min, Math.min(max, v));
+            if (next[c.key] !== clamped) {
+              next[c.key] = clamped;
+              changed = true;
+            }
           }
         }
-        return next;
+        return changed ? next : prev;
       });
     } catch {
       // ignore
     }
-  }, [storageKey, columns]);
+  }, [storageKey, columnsLayoutKey]);
 
   useEffect(() => {
     try {

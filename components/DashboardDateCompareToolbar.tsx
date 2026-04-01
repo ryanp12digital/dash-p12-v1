@@ -28,13 +28,6 @@ export default function DashboardDateCompareToolbar() {
   const dateRef = useRef<HTMLDivElement>(null);
   useClickOutside(dateRef, () => setDateOpen(false), dateOpen);
 
-  useEffect(() => {
-    if (dateOpen) {
-      setDraftFrom(dateFrom);
-      setDraftTo(dateTo);
-    }
-  }, [dateOpen, dateFrom, dateTo]);
-
   const formatRangeLabel = useCallback(() => {
     const a = parseYmdLocal(dateFrom);
     const b = parseYmdLocal(dateTo);
@@ -63,7 +56,16 @@ export default function DashboardDateCompareToolbar() {
       <div className="relative" ref={dateRef}>
         <button
           type="button"
-          onClick={() => setDateOpen((o) => !o)}
+          onClick={() =>
+            setDateOpen((o) => {
+              const next = !o;
+              if (next) {
+                setDraftFrom(dateFrom);
+                setDraftTo(dateTo);
+              }
+              return next;
+            })
+          }
           className="cursor-pointer flex items-center gap-2 rounded-lg border border-[#e2e8f0] bg-white px-4 py-2 text-sm font-medium text-[#0f172a] transition-colors hover:bg-[#f8fafc]"
         >
           <Calendar className="h-4 w-4 shrink-0" />

@@ -102,6 +102,17 @@ export default function MetaFeaturedCampaignsTable() {
         render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.impressions)}</span>,
       },
       {
+        key: "linkClicks",
+        header: t("meta.colLinkClicks"),
+        width: 140,
+        minWidth: 110,
+        align: "right",
+        sortable: true,
+        sortType: "number",
+        sortValue: (row) => row.linkClicks,
+        render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.linkClicks)}</span>,
+      },
+      {
         key: "ctr",
         header: t("meta.colCtrAll"),
         width: 90,
@@ -169,6 +180,7 @@ export default function MetaFeaturedCampaignsTable() {
   useEffect(() => {
     setColumnOrder((prev) => {
       const merged = [...prev.filter((k) => defaultOrder.includes(k)), ...defaultOrder.filter((k) => !prev.includes(k))];
+      if (prev.length === merged.length && prev.every((v, i) => v === merged[i])) return prev;
       return merged;
     });
   }, [defaultOrder]);
@@ -178,7 +190,12 @@ export default function MetaFeaturedCampaignsTable() {
       const raw = window.localStorage.getItem(storageKey);
       if (!raw) return;
       const parsed = JSON.parse(raw) as { order?: string[]; hidden?: string[] };
-      if (Array.isArray(parsed.order)) setColumnOrder(parsed.order);
+      if (Array.isArray(parsed.order)) {
+        setColumnOrder((prev) => {
+          if (prev.length === parsed.order!.length && prev.every((v, i) => v === parsed.order![i])) return prev;
+          return parsed.order!;
+        });
+      }
       if (Array.isArray(parsed.hidden)) setHiddenKeys(parsed.hidden);
     } catch {
       // ignore

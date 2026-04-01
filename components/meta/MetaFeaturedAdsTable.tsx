@@ -611,7 +611,10 @@ export default function MetaFeaturedAdsTable() {
     [featuredAds, selectedCampaigns, selectedAdsets],
   );
 
-  const fmtPct = (n: number) => `${new Intl.NumberFormat(intlLocale, { maximumFractionDigits: 2 }).format(n)}%`;
+  const fmtPct = useCallback(
+    (n: number) => `${new Intl.NumberFormat(intlLocale, { maximumFractionDigits: 2 }).format(n)}%`,
+    [intlLocale],
+  );
 
   /* ── Columns ── */
   const columns = useMemo<ResizableTableColumn<(typeof metaFeaturedAds)[number]>[]>(
@@ -720,6 +723,13 @@ export default function MetaFeaturedAdsTable() {
         render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.impressions)}</span>,
       },
       {
+        key: "linkClicks", header: t("meta.colLinkClicks"), width: 140, minWidth: 110, align: "right",
+        sortable: true,
+        sortType: "number",
+        sortValue: (row) => row.linkClicks,
+        render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.linkClicks)}</span>,
+      },
+      {
         key: "ctr", header: t("meta.colCtrAll"), width: 90, minWidth: 80, align: "right",
         sortable: true,
         sortType: "number",
@@ -774,7 +784,9 @@ export default function MetaFeaturedAdsTable() {
   useEffect(() => {
     setColumnOrder((prev) => {
       const merged = [...prev.filter((k) => defaultOrder.includes(k)), ...defaultOrder.filter((k) => !prev.includes(k))];
-      return [lockedFirstKey, ...merged.filter((k) => k !== lockedFirstKey)];
+      const next = [lockedFirstKey, ...merged.filter((k) => k !== lockedFirstKey)];
+      if (prev.length === next.length && prev.every((v, i) => v === next[i])) return prev;
+      return next;
     });
   }, [defaultOrder]);
 
@@ -785,7 +797,10 @@ export default function MetaFeaturedAdsTable() {
       const parsed = JSON.parse(raw) as { order?: string[]; hidden?: string[] };
       if (Array.isArray(parsed.order)) {
         const ordered = [lockedFirstKey, ...parsed.order.filter((k) => k !== lockedFirstKey)];
-        setColumnOrder(ordered);
+        setColumnOrder((prev) => {
+          if (prev.length === ordered.length && prev.every((v, i) => v === ordered[i])) return prev;
+          return ordered;
+        });
       }
       if (Array.isArray(parsed.hidden)) setHiddenKeys(parsed.hidden.filter((k) => k !== lockedFirstKey));
     } catch {

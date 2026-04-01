@@ -292,6 +292,7 @@ export type MetaCampaignRow = {
   spent: number;
   reach: number;
   impressions: number;
+  linkClicks: number;
   ctr: number;
   cpc: number;
   cpm: number;
@@ -307,6 +308,7 @@ export const metaFeaturedCampaigns: MetaCampaignRow[] = [
     spent: 323.42,
     reach: 1818,
     impressions: 13_698,
+    linkClicks: 4,
     ctr: 0.03,
     cpc: 80.86,
     cpm: 23.61,
@@ -320,6 +322,7 @@ export const metaFeaturedCampaigns: MetaCampaignRow[] = [
     spent: 2324.4,
     reach: 12_400,
     impressions: 45_200,
+    linkClicks: 54,
     ctr: 0.12,
     cpc: 12.9,
     cpm: 51.42,
@@ -333,6 +336,7 @@ export const metaFeaturedCampaigns: MetaCampaignRow[] = [
     spent: 63.12,
     reach: 890,
     impressions: 6_120,
+    linkClicks: 3,
     ctr: 0.05,
     cpc: 30.0,
     cpm: 10.31,
@@ -341,11 +345,12 @@ export const metaFeaturedCampaigns: MetaCampaignRow[] = [
   {
     name: "[P12][PLJP][CBO][ENG][VV][ABERTO][01/12]",
     resultValue: "890",
-    resultLabelKey: "meta.metric.linkClicks",
+    resultLabelKey: "meta.metric.leadsOnMeta",
     costPerResultBrl: 0.15,
     spent: 133.5,
     reach: 2100,
     impressions: 8900,
+    linkClicks: 107,
     ctr: 1.2,
     cpc: 0.15,
     cpm: 15.0,
@@ -359,6 +364,7 @@ export const metaFeaturedCampaigns: MetaCampaignRow[] = [
     spent: 882.0,
     reach: 5600,
     impressions: 18_200,
+    linkClicks: 146,
     ctr: 0.8,
     cpc: 2.1,
     cpm: 48.46,
@@ -378,6 +384,7 @@ export type MetaAdRow = {
   spent: number;
   reach: number;
   impressions: number;
+  linkClicks: number;
   ctr: number;
   cpc: number;
   cpm: number;
@@ -400,6 +407,7 @@ export const metaFeaturedAds: MetaAdRow[] = [
     spent: 323.36,
     reach: 1806,
     impressions: 13_673,
+    linkClicks: 3,
     ctr: 0.02,
     cpc: 107.79,
     cpm: 23.65,
@@ -420,6 +428,7 @@ export const metaFeaturedAds: MetaAdRow[] = [
     spent: 384.0,
     reach: 1750,
     impressions: 12_800,
+    linkClicks: 4,
     ctr: 0.03,
     cpc: 96.0,
     cpm: 30.0,
@@ -440,6 +449,7 @@ export const metaFeaturedAds: MetaAdRow[] = [
     spent: 1080.0,
     reach: 4200,
     impressions: 9800,
+    linkClicks: 44,
     ctr: 0.45,
     cpc: 45.0,
     cpm: 110.2,
@@ -455,11 +465,12 @@ export const metaFeaturedAds: MetaAdRow[] = [
     thumbLetter: "E",
     thumbnailUrl: makeAdThumbnailDataUri("E"),
     resultValue: "1.200",
-    resultLabelKey: "meta.metric.linkClicks",
+    resultLabelKey: "meta.metric.leadsOnMeta",
     costPerResultBrl: 0.08,
     spent: 96.0,
     reach: 3200,
     impressions: 12_000,
+    linkClicks: 12,
     ctr: 0.1,
     cpc: 0.08,
     cpm: 8.0,
@@ -480,6 +491,7 @@ export const metaFeaturedAds: MetaAdRow[] = [
     spent: 380.0,
     reach: 1500,
     impressions: 9500,
+    linkClicks: 4,
     ctr: 0.04,
     cpc: 40.0,
     cpm: 40.0,
