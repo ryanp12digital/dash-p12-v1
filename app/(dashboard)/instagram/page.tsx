@@ -3,11 +3,12 @@
 import DashboardDateCompareToolbar from "@/components/DashboardDateCompareToolbar";
 import DashboardPeriodLegend from "@/components/DashboardPeriodLegend";
 import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
+import { DASHBOARD_PAGE_MAIN_CLASS } from "@/lib/dashboard-layout";
 
 export default function InstagramPage() {
   const { t } = useDashboardSettings();
   return (
-    <main className="mx-auto w-full max-w-[405px] space-y-6 px-4 py-4 sm:max-w-[1140px] sm:px-6 sm:py-6">
+    <main className={DASHBOARD_PAGE_MAIN_CLASS}>
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>

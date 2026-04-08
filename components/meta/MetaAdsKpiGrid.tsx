@@ -14,6 +14,7 @@ import {
 import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
 import { metaKpiRows, type MetaKpiRow } from "@/lib/meta-ads-data";
 import { useMetaAdsData } from "@/components/meta/MetaAdsDataContext";
+import { DASHBOARD_SECTION_STACK_CLASS } from "@/lib/dashboard-layout";
 
 const cardHover =
   "transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md";
@@ -240,7 +241,7 @@ export default function MetaAdsKpiGrid() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className={DASHBOARD_SECTION_STACK_CLASS}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-base font-semibold text-[#0f172a]">{t("meta.kpiLayoutTitle")}</div>
         <button

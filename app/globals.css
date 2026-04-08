@@ -1,16 +1,100 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f5f6f8;
-  --foreground: #0f172a;
+  --background: #050505;
+  --foreground: #a3a3a3;
+  --surface: rgba(23, 23, 23, 0.55);
+  --surface-strong: rgba(10, 10, 10, 0.88);
+  --border: rgba(64, 64, 64, 0.55);
+  --text-primary: #f5f5f5;
+  --text-secondary: #a3a3a3;
+  --text-muted: #737373;
+  --accent: #22d3ee;
+  --accent-soft: rgba(34, 211, 238, 0.14);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', Arial, sans-serif;
+  font-family: "Inter", Arial, sans-serif;
 }
 
 * {
   box-sizing: border-box;
+}
+
+.theme-pulse {
+  color-scheme: dark;
+}
+
+/* Base visual do design system de referência (dark + cyan glow). */
+.theme-pulse ::selection {
+  background: rgba(34, 211, 238, 0.2);
+  color: #cffafe;
+}
+
+.theme-pulse .bg-\[\#f5f6f8\] {
+  background: radial-gradient(ellipse at top right, rgba(23, 23, 23, 0.6) 0%, #050505 65%) !important;
+}
+
+.theme-pulse .bg-white,
+.theme-pulse .bg-white\/95,
+.theme-pulse .bg-\[\#f8fafc\],
+.theme-pulse .bg-\[\#f1f5f9\],
+.theme-pulse .bg-\[\#f8fafc\]\/95 {
+  background: var(--surface) !important;
+  backdrop-filter: blur(10px);
+}
+
+.theme-pulse .border-\[\#e2e8f0\],
+.theme-pulse .border-slate-200,
+.theme-pulse .border-slate-300,
+.theme-pulse .border-neutral-200 {
+  border-color: var(--border) !important;
+}
+
+.theme-pulse .text-\[\#0f172a\],
+.theme-pulse .text-slate-900,
+.theme-pulse .text-slate-800 {
+  color: var(--text-primary) !important;
+}
+
+.theme-pulse .text-\[\#64748b\],
+.theme-pulse .text-\[\#94a3b8\],
+.theme-pulse .text-slate-500,
+.theme-pulse .text-slate-600,
+.theme-pulse .text-slate-400 {
+  color: var(--text-secondary) !important;
+}
+
+.theme-pulse .text-\[\#0729cf\],
+.theme-pulse .text-\[\#0668E1\],
+.theme-pulse .text-blue-500 {
+  color: var(--accent) !important;
+  text-shadow: 0 0 12px rgba(34, 211, 238, 0.32);
+}
+
+.theme-pulse .bg-\[\#0729cf\],
+.theme-pulse .bg-\[\#0668E1\] {
+  background: var(--accent) !important;
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.32);
+}
+
+.theme-pulse .shadow-sm,
+.theme-pulse .shadow-md,
+.theme-pulse .shadow-xl,
+.theme-pulse .shadow-\[0_8px_32px_rgba\(7\2c 41\2c 207\2c 0\.10\)\2c 0_2px_8px_rgba\(0\2c 0\2c 0\2c 0\.06\)\] {
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.36), 0 2px 18px rgba(34, 211, 238, 0.07) !important;
+}
+
+.theme-pulse .rounded-2xl {
+  border-radius: 1rem;
+}
+
+.theme-pulse table thead {
+  background: rgba(23, 23, 23, 0.7);
+}
+
+.theme-pulse tbody tr:hover {
+  background: rgba(38, 38, 38, 0.32) !important;
 }

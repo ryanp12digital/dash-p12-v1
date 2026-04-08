@@ -7,13 +7,14 @@ import MetaFeaturedAdsTable from "@/components/meta/MetaFeaturedAdsTable";
 import MetaAdsChartsSection from "@/components/meta/MetaAdsChartsSection";
 import { useMetaAdsData } from "@/components/meta/MetaAdsDataContext";
 import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
+import { DASHBOARD_PAGE_MAIN_CLASS } from "@/lib/dashboard-layout";
 
 export default function MetaAdsPage() {
   const { t } = useDashboardSettings();
   const { insightsError } = useMetaAdsData();
 
   return (
-    <main className="mx-auto w-[1140px] space-y-6 px-4 py-4 sm:px-8 sm:py-6">
+    <main className={DASHBOARD_PAGE_MAIN_CLASS}>
       <MetaAdsPageHeader />
       {insightsError && (
         <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">

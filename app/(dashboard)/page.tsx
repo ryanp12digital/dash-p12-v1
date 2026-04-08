@@ -7,6 +7,7 @@ import OverviewToolbar from "@/components/OverviewToolbar";
 import OverviewChannelAccounts from "@/components/OverviewChannelAccounts";
 import { useOverviewScope } from "@/components/OverviewScopeContext";
 import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
+import { DASHBOARD_PAGE_MAIN_CLASS } from "@/lib/dashboard-layout";
 
 function OverviewHeader() {
   const { t, account } = useDashboardSettings();
@@ -47,7 +48,7 @@ function PerformanceSummariesHeading() {
 function OverviewContent() {
   const { t } = useDashboardSettings();
   return (
-      <main className="mx-auto w-full max-w-[405px] space-y-6 px-4 py-4 sm:max-w-[1140px] sm:px-6 sm:py-6">
+      <main className={DASHBOARD_PAGE_MAIN_CLASS}>
       
       <OverviewChannelAccounts />
       <div>

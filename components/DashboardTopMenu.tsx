@@ -30,7 +30,7 @@ export default function DashboardTopMenu() {
     >
       <nav
         aria-label={t("nav.main")}
-        className="flex items-center gap-1 rounded-2xl border border-[#e2e8f0] bg-white/95 px-2 py-2 shadow-[0_8px_32px_rgba(7,41,207,0.10),0_2px_8px_rgba(0,0,0,0.06)] backdrop-blur-md"
+        className="flex items-center gap-1 rounded-2xl border border-neutral-800/60 bg-[#0a0a0a]/85 px-2 py-2 shadow-[0_16px_44px_rgba(0,0,0,0.45),0_2px_18px_rgba(34,211,238,0.08)] backdrop-blur-md"
       >
         {NAV.map(({ href, labelKey, Icon, iconColor }) => {
           const active = pathname === href || (href !== "/" && pathname.startsWith(href));
@@ -45,19 +45,19 @@ export default function DashboardTopMenu() {
               aria-current={active ? "page" : undefined}
               className={`group relative flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-150 ${
                 active
-                  ? "bg-white text-[#0729cf] shadow-sm"
-                  : "text-[#0f172a] hover:bg-[#f1f5f9] hover:text-[#0f172a]"
+                  ? "bg-cyan-500/12 text-cyan-300 shadow-sm"
+                  : "text-neutral-400 hover:bg-neutral-800/50 hover:text-neutral-100"
               }`}
             >
               <Icon
                 className={`h-4 w-4 shrink-0 transition-colors duration-150 ${
-                  active ? "text-[#0729cf]" : "text-[#0f172a]"
+                  active ? "text-cyan-300" : "text-neutral-400"
                 }`}
                 aria-hidden
               />
               <span
                 className={`whitespace-nowrap transition-colors duration-150 ${
-                  active ? "text-[#0729cf]" : ""
+                  active ? "text-cyan-300" : ""
                 }`}
               >
                 {label}
@@ -66,7 +66,7 @@ export default function DashboardTopMenu() {
               {/* Active dot indicator */}
               {active && (
                 <span
-                  className="absolute -bottom-[13px] left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-[#0729cf]"
+                  className="absolute -bottom-[13px] left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.9)]"
                   aria-hidden
                 />
               )}

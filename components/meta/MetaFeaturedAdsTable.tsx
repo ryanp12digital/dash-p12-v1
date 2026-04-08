@@ -11,6 +11,7 @@ import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
 import { metaFeaturedAds } from "@/lib/meta-ads-data";
 import { useOverviewScope } from "@/components/OverviewScopeContext";
 import { useMetaAdsData } from "@/components/meta/MetaAdsDataContext";
+import { DASHBOARD_WIDE_SURFACE_MAX_CLASS } from "@/lib/dashboard-layout";
 import { ResizableTable, type ResizableTableColumn } from "@/components/ui/resizable-table";
 import TableEditModal, { type TableEditMetric } from "@/components/ui/table-edit-modal";
 
@@ -174,7 +175,7 @@ function AdLightbox({ ad, onClose }: { ad: LightboxAd; onClose: () => void }) {
         aria-label={ad.name}
         onClick={(e) => e.stopPropagation()}
         className={`relative flex w-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_32px_80px_rgba(0,0,0,0.30),0_8px_24px_rgba(7,41,207,0.12)] transition-all duration-200 ${
-          compareMode ? "max-w-[1140px]" : "max-w-lg"
+          compareMode ? DASHBOARD_WIDE_SURFACE_MAX_CLASS : "max-w-lg"
         }`}
         style={{ maxHeight: "92vh" }}
       >
