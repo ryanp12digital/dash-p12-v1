@@ -1,17 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { CircleHelp, Pencil } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
 import { metaFeaturedCampaigns } from "@/lib/meta-ads-data";
 import { ResizableTable, type ResizableTableColumn } from "@/components/ui/resizable-table";
 import TableEditModal, { type TableEditMetric } from "@/components/ui/table-edit-modal";
 
 const tableCardClass =
-  "overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white/95 shadow-[0_4px_20px_rgba(7,41,207,0.06),0_1px_4px_rgba(0,0,0,0.04)]";
-
-const theadClass =
-  "bg-[#f8fafc] text-left text-[10px] font-bold uppercase tracking-wider text-[#64748b]";
+  "rounded-2xl border border-neutral-800/60 bg-neutral-900/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_12px_40px_rgba(0,0,0,0.35)] backdrop-blur-md";
 
 export default function MetaFeaturedCampaignsTable() {
   const { t, formatDisplayCurrencyAmount, formatCount, intlLocale } = useDashboardSettings();
@@ -30,7 +27,7 @@ export default function MetaFeaturedCampaignsTable() {
         sortable: true,
         sortType: "string",
         sortValue: (row) => row.name,
-        render: (row) => <span className="text-sm font-semibold text-[#0f172a] truncate">{row.name}</span>,
+        render: (row) => <span className="truncate text-sm font-semibold text-neutral-100">{row.name}</span>,
       },
       {
         key: "results",
@@ -42,8 +39,8 @@ export default function MetaFeaturedCampaignsTable() {
         sortValue: (row) => row.resultValue,
         render: (row) => (
           <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-bold text-[#0f172a]">{row.resultValue}</span>
-            <span className="text-[11px] leading-tight text-[#64748b]">{t(row.resultLabelKey)}</span>
+            <span className="text-sm font-bold text-neutral-100">{row.resultValue}</span>
+            <span className="text-[11px] leading-tight text-neutral-500">{t(row.resultLabelKey)}</span>
           </div>
         ),
       },
@@ -57,10 +54,10 @@ export default function MetaFeaturedCampaignsTable() {
         sortValue: (row) => row.costPerResultBrl,
         render: (row) => (
           <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-bold text-[#0f172a]">
+            <span className="text-sm font-bold text-neutral-100">
               {formatDisplayCurrencyAmount(row.costPerResultBrl, { maximumFractionDigits: 2 })}
             </span>
-            <span className="text-[11px] leading-tight text-[#64748b]">{t(row.resultLabelKey)}</span>
+            <span className="text-[11px] leading-tight text-neutral-500">{t(row.resultLabelKey)}</span>
           </div>
         ),
       },
@@ -74,7 +71,7 @@ export default function MetaFeaturedCampaignsTable() {
         sortType: "number",
         sortValue: (row) => row.spent,
         render: (row) => (
-          <span className="text-right text-sm font-medium text-[#0f172a]">
+          <span className="text-right text-sm font-medium text-neutral-100">
             {formatDisplayCurrencyAmount(row.spent, { maximumFractionDigits: 2 })}
           </span>
         ),
@@ -88,7 +85,7 @@ export default function MetaFeaturedCampaignsTable() {
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.reach,
-        render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.reach)}</span>,
+        render: (row) => <span className="text-sm text-neutral-200">{formatCount(row.reach)}</span>,
       },
       {
         key: "impressions",
@@ -99,7 +96,7 @@ export default function MetaFeaturedCampaignsTable() {
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.impressions,
-        render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.impressions)}</span>,
+        render: (row) => <span className="text-sm text-neutral-200">{formatCount(row.impressions)}</span>,
       },
       {
         key: "linkClicks",
@@ -110,7 +107,7 @@ export default function MetaFeaturedCampaignsTable() {
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.linkClicks,
-        render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.linkClicks)}</span>,
+        render: (row) => <span className="text-sm text-neutral-200">{formatCount(row.linkClicks)}</span>,
       },
       {
         key: "ctr",
@@ -121,7 +118,7 @@ export default function MetaFeaturedCampaignsTable() {
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.ctr,
-        render: (row) => <span className="text-sm text-[#0f172a]">{fmtPct(row.ctr)}</span>,
+        render: (row) => <span className="text-sm text-neutral-200">{fmtPct(row.ctr)}</span>,
       },
       {
         key: "cpc",
@@ -133,7 +130,7 @@ export default function MetaFeaturedCampaignsTable() {
         sortType: "number",
         sortValue: (row) => row.cpc,
         render: (row) => (
-          <span className="text-sm text-[#0f172a]">
+          <span className="text-sm text-neutral-200">
             {formatDisplayCurrencyAmount(row.cpc, { maximumFractionDigits: 2 })}
           </span>
         ),
@@ -148,7 +145,7 @@ export default function MetaFeaturedCampaignsTable() {
         sortType: "number",
         sortValue: (row) => row.cpm,
         render: (row) => (
-          <span className="text-sm text-[#0f172a]">
+          <span className="text-sm text-neutral-200">
             {formatDisplayCurrencyAmount(row.cpm, { maximumFractionDigits: 2 })}
           </span>
         ),
@@ -163,7 +160,7 @@ export default function MetaFeaturedCampaignsTable() {
         sortType: "number",
         sortValue: (row) => row.frequency,
         render: (row) => (
-          <span className="text-sm text-[#0f172a]">
+          <span className="text-sm text-neutral-200">
             {new Intl.NumberFormat(intlLocale, { maximumFractionDigits: 2 }).format(row.frequency)}
           </span>
         ),
@@ -245,22 +242,14 @@ export default function MetaFeaturedCampaignsTable() {
 
   return (
     <div className={tableCardClass}>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#f1f5f9] px-4 py-3 sm:px-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800/50 px-4 py-3 sm:px-6">
         <div className="flex items-center justify-center gap-1.5">
-          <h2 className="text-base font-semibold text-[#0f172a]">{t("meta.tableCampaignsTitle")}</h2>
-          <button
-            type="button"
-            className="rounded-md p-0.5 text-[#94a3b8] hover:bg-[#f1f5f9]"
-            title={t("meta.tableCampaignsHelp")}
-            aria-label={t("meta.tableCampaignsHelp")}
-          >
-            <CircleHelp className="h-4 w-4" />
-          </button>
+          <h2 className="text-base font-semibold text-neutral-100">{t("meta.tableCampaignsTitle")}</h2>
         </div>
         <button
           type="button"
           onClick={() => setEditOpen((v) => !v)}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-semibold text-[#0f172a] hover:bg-[#f8fafc]"
+          className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-700 bg-neutral-900/80 px-3 py-2 text-xs font-semibold text-neutral-200 hover:border-neutral-500 hover:text-cyan-300"
         >
           <Pencil className="h-3.5 w-3.5" />
           {t("meta.editTable")}
@@ -268,6 +257,7 @@ export default function MetaFeaturedCampaignsTable() {
       </div>
       <ResizableTable
         tableId="meta-featured-campaigns"
+        variant="dark"
         columns={visibleColumns}
         rows={metaFeaturedCampaigns}
         rowKey={(row) => `${row.name}-${row.resultValue}-${row.resultLabelKey}`}

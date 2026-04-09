@@ -173,6 +173,55 @@ export async function fetchAccountInsights(
   return row ?? null;
 }
 
+/** Linha de insights com dimensão de breakdown (gênero, região, etc.). */
+export type MetaInsightBreakdownRow = MetaInsightRow & {
+  gender?: string;
+  region?: string;
+};
+
+type MetaBreakdownInsightsResponse = {
+  data: MetaInsightBreakdownRow[];
+  paging?: { next?: string };
+};
+
+/**
+ * Insights ao nível da conta com um único breakdown (ex.: gender, region).
+ * Agrega todas as páginas de resultados.
+ */
+export async function fetchAccountInsightsBreakdown(
+  accessToken: string,
+  adAccountId: string,
+  timeRange: { since: string; until: string },
+  breakdown: "gender" | "region",
+): Promise<MetaInsightBreakdownRow[]> {
+  const id = adAccountId.startsWith("act_") ? adAccountId : `act_${adAccountId}`;
+  const version = getGraphApiVersion();
+  const firstUrl = new URL(`${graphBase(version)}/${id}/insights`);
+  firstUrl.searchParams.set("access_token", accessToken);
+  firstUrl.searchParams.set("fields", INSIGHT_FIELDS);
+  firstUrl.searchParams.set("breakdowns", breakdown);
+  firstUrl.searchParams.set("time_range", JSON.stringify(timeRange));
+  firstUrl.searchParams.set("limit", "500");
+
+  const all: MetaInsightBreakdownRow[] = [];
+  let next: string | undefined = firstUrl.toString();
+  let pages = 0;
+  while (next && pages < 25) {
+    pages += 1;
+    const res = await fetch(next, { cache: "no-store" });
+    const json = (await res.json()) as MetaBreakdownInsightsResponse & {
+      error?: { message: string; code: number };
+    };
+    const err = json.error;
+    if (!res.ok || err) {
+      throw new MetaGraphError(err?.message ?? `HTTP ${res.status}`, err?.code, json);
+    }
+    all.push(...(json.data ?? []));
+    next = json.paging?.next;
+  }
+  return all;
+}
+
 /**
  * Insights ao nível de anúncio.
  * Usado para montar o bloco "Anúncios em destaque" com thumbnail real (via creative_id).

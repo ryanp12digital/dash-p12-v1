@@ -5,6 +5,7 @@ import { campaigns } from "@/lib/data";
 import { TrendingUp, TrendingDown, Minus, ArrowDown, ArrowUp } from "lucide-react";
 import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
 import { useOverviewScope } from "@/components/OverviewScopeContext";
+import { DASHBOARD_TABLE_SCROLL_AREA_CLASS } from "@/lib/dashboard-layout";
 
 const TrendIcon = ({ trend }: { trend: string }) => {
   if (trend === "up") return <TrendingUp className="h-4 w-4 text-emerald-500" />;
@@ -65,7 +66,7 @@ export default function CampaignTable() {
 
   return (
     <div
-      className="overflow-hidden rounded-2xl"
+      className="rounded-2xl"
       style={{
         background: "rgba(255,255,255,0.95)",
         border: "1px solid rgba(226,232,240,0.8)",
@@ -82,9 +83,11 @@ export default function CampaignTable() {
           />
         </span>
       </div>
-      <table className="w-full">
+      <div className={DASHBOARD_TABLE_SCROLL_AREA_CLASS}>
+      <table className="w-full min-w-[720px]">
         <thead>
           <tr
+            className="sticky top-0 z-10"
             style={{
               background: "linear-gradient(90deg, #0d1626, #0f172a)",
               boxShadow: "0 4px 20px rgba(7,41,207,0.15)",
@@ -188,6 +191,7 @@ export default function CampaignTable() {
           ))}
         </tbody>
       </table>
+      </div>
 
       <style>{`
         @keyframes rowFadeIn {

@@ -1,21 +1,22 @@
 /** Dados mock para Visão geral — Google Meu Negócio e redes sociais (audiência). */
 
+/** Paleta legível sobre fundo escuro (gráficos da Visão geral). */
 export const SOCIAL_GENDER_COLORS = {
-  male: "#16a34a",
-  female: "#172554",
-  unknown: "#7dd3fc",
+  male: "#22d3ee",
+  female: "#818cf8",
+  unknown: "#94a3b8",
 } as const;
 
 export const GMB_LINE_COLORS = {
-  total: "#22c55e",
-  search: "#1e3a8a",
-  maps: "#38bdf8",
-  chat: "#2563eb",
-  routes: "#7dd3fc",
-  calls: "#0f172a",
+  total: "#22d3ee",
+  search: "#38bdf8",
+  maps: "#a78bfa",
+  chat: "#34d399",
+  routes: "#fbbf24",
+  calls: "#f472b6",
   website: "#93c5fd",
-  bookings: "#bae6fd",
-  orders: "#15803d",
+  bookings: "#2dd4bf",
+  orders: "#fb923c",
 } as const;
 
 export type FollowerGrowthRow = { dateLabel: string; seguidores: number };

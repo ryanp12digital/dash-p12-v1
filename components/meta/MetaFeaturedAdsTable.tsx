@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { createPortal } from "react-dom";
 import {
-  CircleHelp, Pencil, X,
+  Pencil, X,
   SlidersHorizontal, ChevronDown, Search, Check, ZoomIn, GitCompare, Calendar,
   TrendingUp, TrendingDown, Minus,
 } from "lucide-react";
@@ -16,7 +16,7 @@ import { ResizableTable, type ResizableTableColumn } from "@/components/ui/resiz
 import TableEditModal, { type TableEditMetric } from "@/components/ui/table-edit-modal";
 
 const tableCardClass =
-  "overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white/95 shadow-[0_4px_20px_rgba(7,41,207,0.06),0_1px_4px_rgba(0,0,0,0.04)]";
+  "rounded-2xl border border-neutral-800/60 bg-neutral-900/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_12px_40px_rgba(0,0,0,0.35)] backdrop-blur-md";
 
 function useClickOutside(
   ref: RefObject<HTMLElement | null>,
@@ -389,8 +389,8 @@ function Checkbox({ checked, onChange }: { checked: boolean; onChange: () => voi
       onClick={onChange}
       className={`cursor-pointer flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-all duration-150 ${
         checked
-          ? "border-[#0729cf] bg-[#0729cf] shadow-sm shadow-[#0729cf]/30"
-          : "border-[#cbd5e1] bg-white hover:border-[#0729cf]/50"
+          ? "border-cyan-500 bg-cyan-600 shadow-sm shadow-cyan-500/30"
+          : "border-neutral-600 bg-neutral-900 hover:border-cyan-500/50"
       }`}
     >
       {checked && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
@@ -424,30 +424,30 @@ function FilterDropdown({
   );
 
   return (
-    <div className="absolute left-0 top-full z-50 mt-1.5 w-[min(92vw,420px)] overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white shadow-[0_12px_40px_rgba(0,0,0,0.10),0_4px_12px_rgba(7,41,207,0.07)]">
-      <div className="flex items-center justify-between border-b border-[#f1f5f9] px-4 py-3">
-        <span className="text-[10px] font-bold uppercase tracking-wider text-[#64748b]">{title}</span>
+    <div className="absolute left-0 top-full z-50 mt-1.5 w-[min(92vw,420px)] overflow-hidden rounded-2xl border border-neutral-700 bg-neutral-950/95 shadow-[0_20px_50px_rgba(0,0,0,0.55)] backdrop-blur-md">
+      <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-3">
+        <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500">{title}</span>
         <label className="flex cursor-pointer items-center gap-2">
           <Checkbox checked={allSelected} onChange={onToggleAll} />
-          <span className="text-xs font-semibold text-[#0729cf]">Selecionar todos</span>
+          <span className="text-xs font-semibold text-cyan-400">Selecionar todos</span>
         </label>
       </div>
-      <div className="border-b border-[#f1f5f9] px-3 py-2.5">
-        <div className="flex items-center gap-2 rounded-lg border border-[#e2e8f0] bg-[#f8fafc] px-3 py-1.5 transition-colors focus-within:border-[#0729cf]/40 focus-within:bg-white focus-within:shadow-sm">
-          <Search className="h-3.5 w-3.5 shrink-0 text-[#94a3b8]" />
+      <div className="border-b border-neutral-800 px-3 py-2.5">
+        <div className="flex items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-900/80 px-3 py-1.5 transition-colors focus-within:border-cyan-500/40 focus-within:shadow-[0_0_0_1px_rgba(34,211,238,0.15)]">
+          <Search className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
           <input
             ref={searchRef}
             type="text"
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder={`Buscar ${title.toLowerCase()}…`}
-            className="w-full bg-transparent text-xs text-[#0f172a] placeholder-[#94a3b8] outline-none"
+            className="w-full bg-transparent text-xs text-neutral-100 placeholder-neutral-500 outline-none"
           />
           {searchValue && (
             <button
               type="button"
               onClick={() => onSearchChange("")}
-              className="cursor-pointer shrink-0 rounded text-[#94a3b8] hover:text-[#64748b]"
+              className="cursor-pointer shrink-0 rounded text-neutral-500 hover:text-neutral-300"
             >
               <X className="h-3 w-3" />
             </button>
@@ -456,20 +456,20 @@ function FilterDropdown({
       </div>
       <div className="max-h-52 overflow-y-auto px-2 py-1.5">
         {filteredItems.length === 0 ? (
-          <div className="py-5 text-center text-xs text-[#94a3b8]">Nenhum resultado encontrado</div>
+          <div className="py-5 text-center text-xs text-neutral-500">Nenhum resultado encontrado</div>
         ) : (
           filteredItems.map((item) => {
             const checked = selectedItems.includes(item);
             return (
               <label
                 key={item}
-                className={`flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-colors ${checked ? "bg-[#0729cf]/5" : "hover:bg-[#f8fafc]"}`}
+                className={`flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2 transition-colors ${checked ? "bg-cyan-950/35" : "hover:bg-neutral-800/50"}`}
               >
                 <Checkbox checked={checked} onChange={() => onToggle(item)} />
-                <span className={`flex-1 truncate text-xs font-medium ${checked ? "text-[#0729cf]" : "text-[#0f172a]"}`} title={item}>
+                <span className={`flex-1 truncate text-xs font-medium ${checked ? "text-cyan-300" : "text-neutral-200"}`} title={item}>
                   {item}
                 </span>
-                <span className="ml-auto shrink-0 rounded-full bg-[#f1f5f9] px-2 py-0.5 text-[10px] font-bold tabular-nums text-[#64748b]">
+                <span className="ml-auto shrink-0 rounded-full bg-neutral-800 px-2 py-0.5 text-[10px] font-bold tabular-nums text-neutral-400">
                   {itemCounts[item] ?? 0}
                 </span>
               </label>
@@ -477,21 +477,21 @@ function FilterDropdown({
           })
         )}
       </div>
-      <div className="flex gap-2 border-t border-[#f1f5f9] px-3 py-3">
+      <div className="flex gap-2 border-t border-neutral-800 px-3 py-3">
         <button
           type="button"
           onClick={() => {
             onClear();
             onSearchChange("");
           }}
-          className="cursor-pointer flex-1 rounded-lg border border-[#e2e8f0] py-2 text-xs font-semibold text-[#64748b] hover:bg-[#f8fafc]"
+          className="cursor-pointer flex-1 rounded-lg border border-neutral-700 py-2 text-xs font-semibold text-neutral-400 hover:bg-neutral-800/80"
         >
           Limpar
         </button>
         <button
           type="button"
           onClick={onClose}
-          className="cursor-pointer flex-1 rounded-lg bg-[#0729cf] py-2 text-xs font-semibold text-white hover:bg-[#0621a8]"
+          className="cursor-pointer flex-1 rounded-lg bg-cyan-600 py-2 text-xs font-semibold text-white hover:bg-cyan-500"
         >
           Aplicar
         </button>
@@ -509,8 +509,8 @@ function FilterButton({ label, count, open, onClick }: { label: string; count: n
       onClick={onClick}
       className={`cursor-pointer inline-flex items-center gap-2 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition-all duration-150 ${
         active
-          ? "border-[#0729cf] bg-[#0729cf] text-white shadow-sm shadow-[#0729cf]/20"
-          : "border-[#e2e8f0] bg-white text-[#374151] hover:border-[#cbd5e1] hover:bg-[#f8fafc]"
+          ? "border-cyan-500/60 bg-cyan-950/50 text-cyan-200 shadow-sm shadow-cyan-500/10"
+          : "border-neutral-700 bg-neutral-900/80 text-neutral-300 hover:border-neutral-500 hover:bg-neutral-800/80"
       }`}
     >
       <span>{label}</span>
@@ -624,7 +624,7 @@ export default function MetaFeaturedAdsTable() {
         key: "ad",
         header: t("meta.colAd"),
         width: 260, minWidth: 200, maxWidth: 560,
-        className: "text-[#64748b]",
+        className: "text-neutral-500",
         sortable: true,
         sortType: "string",
         sortValue: (row) => row.name,
@@ -640,20 +640,20 @@ export default function MetaFeaturedAdsTable() {
                   campaign: row.campaignName,
                   accountId: selectedAccountId ?? "",
                 })}
-                className="group relative h-16 w-16 shrink-0 cursor-zoom-in overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-sm transition-all hover:border-[#0729cf]/40 hover:shadow-md"
+                className="group relative h-16 w-16 shrink-0 cursor-zoom-in overflow-hidden rounded-xl border border-neutral-700 bg-neutral-900/50 shadow-sm transition-all hover:border-cyan-500/40 hover:shadow-md"
                 aria-label={`Ver criativo: ${row.name}`}
               >
                 <img src={row.thumbnailUrl} alt={row.name} className="h-full w-full object-cover" loading="lazy" />
-                <div className="absolute inset-0 flex items-center justify-center bg-[#0f172a]/0 transition-colors group-hover:bg-[#0f172a]/30">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/40">
                   <ZoomIn className="h-6 w-6 text-white opacity-0 drop-shadow transition-opacity group-hover:opacity-100" />
                 </div>
               </button>
             ) : (
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-[#e2e8f0] bg-linear-to-br from-[#0729cf]/10 to-[#60a5fa]/10 text-base font-bold text-[#0729cf]" aria-hidden>
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-neutral-700 bg-linear-to-br from-cyan-500/15 to-sky-500/10 text-base font-bold text-cyan-400" aria-hidden>
                 {row.thumbLetter}
               </div>
             )}
-            <span className="truncate text-xs font-semibold text-[#0f172a]" style={{ maxWidth: "110px" }} title={row.name}>
+            <span className="truncate text-xs font-semibold text-neutral-100" style={{ maxWidth: "110px" }} title={row.name}>
               {row.name}
             </span>
           </div>
@@ -670,9 +670,9 @@ export default function MetaFeaturedAdsTable() {
           const hasResult = Number(row.resultValue) > 0;
           return (
             <div className="flex min-w-0 flex-col gap-0.5">
-              <span className="text-sm font-bold text-[#0f172a]">{hasResult ? row.resultValue : "0"}</span>
+              <span className="text-sm font-bold text-neutral-100">{hasResult ? row.resultValue : "0"}</span>
               {hasResult && row.resultLabelKey && (
-                <span className="truncate text-[11px] leading-tight text-[#64748b]">{t(row.resultLabelKey)}</span>
+                <span className="truncate text-[11px] leading-tight text-neutral-500">{t(row.resultLabelKey)}</span>
               )}
             </div>
           );
@@ -692,11 +692,11 @@ export default function MetaFeaturedAdsTable() {
           const hasResult = Number(row.resultValue) > 0;
           return (
             <div className="flex min-w-0 flex-col gap-0.5">
-              <span className="text-sm font-bold text-[#0f172a]">
+              <span className="text-sm font-bold text-neutral-100">
                 {hasResult ? formatDisplayCurrencyAmount(row.costPerResultBrl, { maximumFractionDigits: 2 }) : "—"}
               </span>
               {hasResult && row.resultLabelKey && (
-                <span className="truncate text-[11px] leading-tight text-[#64748b]">{t(row.resultLabelKey)}</span>
+                <span className="truncate text-[11px] leading-tight text-neutral-500">{t(row.resultLabelKey)}</span>
               )}
             </div>
           );
@@ -707,70 +707,82 @@ export default function MetaFeaturedAdsTable() {
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.spent,
-        render: (row) => <span className="text-right text-sm font-medium text-[#0f172a]">{formatDisplayCurrencyAmount(row.spent, { maximumFractionDigits: 2 })}</span>,
+        render: (row) => (
+          <span className="text-right text-sm font-medium text-cyan-200/95">
+            {formatDisplayCurrencyAmount(row.spent, { maximumFractionDigits: 2 })}
+          </span>
+        ),
       },
       {
         key: "reach", header: t("meta.colReach"), width: 120, minWidth: 100, align: "right",
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.reach,
-        render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.reach)}</span>,
+        render: (row) => <span className="text-sm tabular-nums text-neutral-200">{formatCount(row.reach)}</span>,
       },
       {
         key: "impressions", header: t("meta.colImpressions"), width: 140, minWidth: 110, align: "right",
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.impressions,
-        render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.impressions)}</span>,
+        render: (row) => <span className="text-sm tabular-nums text-neutral-200">{formatCount(row.impressions)}</span>,
       },
       {
         key: "linkClicks", header: t("meta.colLinkClicks"), width: 140, minWidth: 110, align: "right",
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.linkClicks,
-        render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.linkClicks)}</span>,
+        render: (row) => <span className="text-sm tabular-nums text-neutral-200">{formatCount(row.linkClicks)}</span>,
       },
       {
         key: "ctr", header: t("meta.colCtrAll"), width: 90, minWidth: 80, align: "right",
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.ctr,
-        render: (row) => <span className="text-sm text-[#0f172a]">{fmtPct(row.ctr)}</span>,
+        render: (row) => <span className="text-sm tabular-nums text-neutral-200">{fmtPct(row.ctr)}</span>,
       },
       {
         key: "cpc", header: t("meta.colCpc"), width: 120, minWidth: 100, align: "right",
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.cpc,
-        render: (row) => <span className="text-sm text-[#0f172a]">{formatDisplayCurrencyAmount(row.cpc, { maximumFractionDigits: 2 })}</span>,
+        render: (row) => (
+          <span className="text-sm tabular-nums text-neutral-200">{formatDisplayCurrencyAmount(row.cpc, { maximumFractionDigits: 2 })}</span>
+        ),
       },
       {
         key: "cpm", header: t("meta.colCpm"), width: 120, minWidth: 100, align: "right",
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.cpm,
-        render: (row) => <span className="text-sm text-[#0f172a]">{formatDisplayCurrencyAmount(row.cpm, { maximumFractionDigits: 2 })}</span>,
+        render: (row) => (
+          <span className="text-sm tabular-nums text-neutral-200">{formatDisplayCurrencyAmount(row.cpm, { maximumFractionDigits: 2 })}</span>
+        ),
       },
       {
         key: "frequency", header: t("meta.colFrequency"), width: 120, minWidth: 100, align: "right",
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.frequency,
-        render: (row) => <span className="text-sm text-[#0f172a]">{new Intl.NumberFormat(intlLocale, { maximumFractionDigits: 2 }).format(row.frequency)}</span>,
+        render: (row) => (
+          <span className="text-sm tabular-nums text-neutral-300">
+            {new Intl.NumberFormat(intlLocale, { maximumFractionDigits: 2 }).format(row.frequency)}
+          </span>
+        ),
       },
       {
         key: "pageEngagement", header: t("meta.colPageEngagement"), width: 160, minWidth: 130, align: "right",
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.pageEngagement,
-        render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.pageEngagement)}</span>,
+        render: (row) => <span className="text-sm tabular-nums text-neutral-200">{formatCount(row.pageEngagement)}</span>,
       },
       {
         key: "video25", header: t("meta.colVideo25"), width: 140, minWidth: 110, align: "right",
         sortable: true,
         sortType: "number",
         sortValue: (row) => row.videoPlays25,
-        render: (row) => <span className="text-sm text-[#0f172a]">{formatCount(row.videoPlays25)}</span>,
+        render: (row) => <span className="text-sm tabular-nums text-neutral-200">{formatCount(row.videoPlays25)}</span>,
       },
     ],
     [t, intlLocale, fmtPct, formatDisplayCurrencyAmount, formatCount, selectedAccountId],
@@ -869,29 +881,26 @@ export default function MetaFeaturedAdsTable() {
 
       <div className={tableCardClass}>
         {/* Card header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#f1f5f9] px-4 py-3 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-800/50 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-1.5">
-            <h2 className="text-base font-semibold text-[#0f172a]">{t("meta.tableAdsTitle")}</h2>
-            <button type="button" className="rounded-md p-0.5 text-[#94a3b8] hover:bg-[#f1f5f9]" title={t("meta.tableAdsHelp")} aria-label={t("meta.tableAdsHelp")}>
-              <CircleHelp className="h-4 w-4" />
-            </button>
+            <h2 className="text-base font-semibold text-neutral-100">{t("meta.tableAdsTitle")}</h2>
           </div>
           <button
             type="button"
             onClick={() => setEditOpen((v) => !v)}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-semibold text-[#0f172a] hover:bg-[#f8fafc]"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-neutral-700 bg-neutral-900/80 px-3 py-2 text-xs font-semibold text-neutral-200 hover:border-neutral-500 hover:text-cyan-300"
           >
             <Pencil className="h-3.5 w-3.5" />
             {t("meta.editTable")}
           </button>
         </div>
         {/* Filter toolbar */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-[#f1f5f9] bg-[#f8fafc]/60 px-4 py-2.5 sm:px-6">
-          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#94a3b8]">
+        <div className="flex flex-wrap items-center gap-2 border-b border-neutral-800/50 bg-neutral-950/40 px-4 py-2.5 sm:px-6">
+          <div className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-neutral-500">
             <SlidersHorizontal className="h-3.5 w-3.5" />
             Filtros
           </div>
-          <div className="mx-1 h-4 w-px shrink-0 bg-[#e2e8f0]" />
+          <div className="mx-1 h-4 w-px shrink-0 bg-neutral-700" />
 
           <div className="relative" ref={campaignRef}>
             <FilterButton label={t("meta.filtersFeaturedCampaigns")} count={selectedCampaigns.length} open={campaignOpen} onClick={() => { setCampaignOpen((o) => !o); if (adsetOpen) setAdsetOpen(false); }} />
@@ -909,46 +918,47 @@ export default function MetaFeaturedAdsTable() {
 
           <div className="ml-auto flex items-center gap-3">
             {hasAnyFilter && (
-              <button type="button" onClick={clearAll} className="cursor-pointer text-xs font-semibold text-[#0729cf] hover:underline">
+              <button type="button" onClick={clearAll} className="cursor-pointer text-xs font-semibold text-cyan-400 hover:underline">
                 Limpar filtros
               </button>
             )}
-            <span className="text-xs text-[#94a3b8]">
-              Exibindo <span className="font-semibold tabular-nums text-[#475569]">{filteredAds.length}</span> de <span className="font-semibold tabular-nums text-[#475569]">{featuredAds.length}</span> anúncios
+            <span className="text-xs text-neutral-500">
+              Exibindo <span className="font-semibold tabular-nums text-neutral-300">{filteredAds.length}</span> de <span className="font-semibold tabular-nums text-neutral-300">{featuredAds.length}</span> anúncios
             </span>
           </div>
         </div>
 
         {loadingAds && (
-          <div className="flex items-center gap-2 px-4 py-2 text-xs text-[#64748b] sm:px-6">
-            <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[#0729cf]/20 border-t-[#0729cf]" />
+          <div className="flex items-center gap-2 px-4 py-2 text-xs text-neutral-500 sm:px-6">
+            <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-cyan-500/20 border-t-cyan-400" />
             Carregando anúncios em destaque…
           </div>
         )}
         {adsError && <div className="px-4 py-2 text-xs text-red-600 sm:px-6">{adsError}</div>}
 
         {hasAnyFilter && (
-          <div className="flex flex-wrap items-center gap-2 border-b border-[#f1f5f9] bg-white/50 px-4 py-2.5 sm:px-6">
+          <div className="flex flex-wrap items-center gap-2 border-b border-neutral-800/50 bg-neutral-950/30 px-4 py-2.5 sm:px-6">
             {selectedCampaigns.map((c) => (
-              <button key={c} type="button" onClick={() => toggleCampaign(c)} className="cursor-pointer group inline-flex max-w-[220px] items-center gap-1.5 rounded-full border border-[#0729cf]/20 bg-[#0729cf]/5 py-1 pl-2.5 pr-2 text-[11px] font-semibold text-[#0729cf] hover:bg-[#0729cf]/10">
+              <button key={c} type="button" onClick={() => toggleCampaign(c)} className="cursor-pointer group inline-flex max-w-[220px] items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-950/30 py-1 pl-2.5 pr-2 text-[11px] font-semibold text-cyan-300 hover:bg-cyan-950/50">
                 <span className="shrink-0 text-[9px] font-black uppercase tracking-wide opacity-50">Camp</span>
                 <span className="truncate">{c}</span>
                 <X className="h-3 w-3 shrink-0 opacity-50 group-hover:opacity-90" />
               </button>
             ))}
             {selectedAdsets.map((a) => (
-              <button key={a} type="button" onClick={() => toggleAdset(a)} className="cursor-pointer group inline-flex max-w-[220px] items-center gap-1.5 rounded-full border border-[#7c3aed]/20 bg-[#7c3aed]/5 py-1 pl-2.5 pr-2 text-[11px] font-semibold text-[#7c3aed] hover:bg-[#7c3aed]/10">
+              <button key={a} type="button" onClick={() => toggleAdset(a)} className="cursor-pointer group inline-flex max-w-[220px] items-center gap-1.5 rounded-full border border-violet-500/30 bg-violet-950/30 py-1 pl-2.5 pr-2 text-[11px] font-semibold text-violet-300 hover:bg-violet-950/50">
                 <span className="shrink-0 text-[9px] font-black uppercase tracking-wide opacity-50">Conj</span>
                 <span className="truncate">{a}</span>
                 <X className="h-3 w-3 shrink-0 opacity-50 group-hover:opacity-90" />
               </button>
             ))}
-            <button type="button" onClick={clearAll} className="cursor-pointer ml-auto text-[11px] font-semibold text-[#94a3b8] hover:text-[#64748b]">Limpar todos</button>
+            <button type="button" onClick={clearAll} className="cursor-pointer ml-auto text-[11px] font-semibold text-neutral-500 hover:text-neutral-300">Limpar todos</button>
           </div>
         )}
 
         <ResizableTable
           tableId="meta-featured-ads"
+          variant="dark"
           columns={visibleColumns}
           rows={filteredAds}
           rowKey={(row) => `${row.name}-${row.adsetName}-${row.resultValue}-${row.spent}-${row.impressions}`}

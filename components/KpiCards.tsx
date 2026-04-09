@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { kpiData, type KpiRow, type KpiPlatform } from "@/lib/data";
-import { CircleHelp, TrendingUp, TrendingDown, Minus, GripVertical } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, GripVertical } from "lucide-react";
 import { IconMeta, IconGoogleAds, IconFacebook, IconInstagram } from "@/components/platform-icons";
 import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
 import { useOverviewScope } from "@/components/OverviewScopeContext";
@@ -27,7 +27,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const cardBase =
-  "flex h-[132px] flex-col justify-between overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-sm";
+  "group relative flex min-h-[164px] flex-col justify-between overflow-hidden rounded-2xl border border-neutral-800/60 bg-neutral-900/30 p-5 backdrop-blur-md";
 const cardHover =
   "transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md";
 
@@ -46,7 +46,7 @@ function PlatformIcons({ platforms }: { platforms: KpiPlatform[] }) {
       {platforms.map((p) => (
         <span
           key={p}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#e2e8f0] bg-[#f8fafc]"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-900/60"
           aria-hidden
         >
           {p === "meta" && <IconMeta className="h-5 w-5 text-[#0668E1]" />}
@@ -77,43 +77,35 @@ function KpiCardContent({ kpi }: { kpi: KpiRow }) {
 
   const pillClass =
     kpi.tone === "up"
-      ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/80"
+      ? "bg-neutral-800/50 text-neutral-300"
       : kpi.tone === "down"
-        ? "bg-red-50 text-red-700 ring-1 ring-red-200/80"
-        : "bg-slate-100 text-slate-600 ring-1 ring-slate-200/80";
+        ? "bg-neutral-800/50 text-neutral-300"
+        : "bg-neutral-800/50 text-neutral-300";
 
   return (
     <>
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="min-w-0 flex-1 truncate text-sm font-semibold leading-snug text-[#0f172a]">
+      <div className="mb-4 flex items-start gap-2">
+        <h3 className="min-w-0 flex-1 truncate text-xs font-medium leading-snug tracking-widest text-neutral-500 uppercase">
           {t(kpi.labelKey)}
         </h3>
-        <button
-          type="button"
-          className="shrink-0 rounded-md p-0.5 text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#64748b]"
-          title={t(kpi.helpKey)}
-          aria-label={t(kpi.helpKey)}
-        >
-          <CircleHelp className="h-4 w-4" />
-        </button>
       </div>
 
       <PlatformIcons platforms={kpi.platforms} />
 
-      <p className="mt-1 text-2xl font-bold tracking-tight text-[#0f172a]">{main}</p>
+      <p className="mt-1 text-4xl leading-none font-light tracking-tight text-neutral-100">{main}</p>
 
       {compareWithPrevious && (
         <>
           <div className="mt-2">
-            <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${pillClass}`}>
+            <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${pillClass}`}>
               {kpi.tone === "up" && <TrendingUp className="h-3.5 w-3.5" aria-hidden />}
               {kpi.tone === "down" && <TrendingDown className="h-3.5 w-3.5" aria-hidden />}
               {kpi.tone === "neutral" && <Minus className="h-3.5 w-3.5 opacity-70" aria-hidden />}
               {pct}
             </span>
           </div>
-          <p className="mt-3 text-xs text-[#64748b]">
-            <span className="font-medium text-[#94a3b8]">{t("overview.prevPeriodValue")}: </span>
+          <p className="mt-3 text-xs text-neutral-500">
+            <span className="font-medium text-neutral-600">{t("overview.prevPeriodValue")}: </span>
             {prevFormatted}
           </p>
         </>
@@ -250,7 +242,7 @@ function KpiGroup({
   if (!mounted) {
     return (
       <div>
-        <h3 className="mb-3 text-[11px] font-bold tracking-wider text-[#64748b] uppercase">
+        <h3 className="mb-3 text-[11px] font-bold tracking-wider text-neutral-500 uppercase">
           {t(titleKey)}
         </h3>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -266,7 +258,7 @@ function KpiGroup({
 
   return (
     <div>
-      <h3 className="mb-3 text-[11px] font-bold tracking-wider text-[#64748b] uppercase">
+      <h3 className="mb-3 text-[11px] font-bold tracking-wider text-neutral-500 uppercase">
         {t(titleKey)}
       </h3>
       <DndContext

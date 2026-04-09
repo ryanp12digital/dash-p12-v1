@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleHelp, TrendingDown, TrendingUp, Minus } from "lucide-react";
+import { TrendingDown, TrendingUp, Minus } from "lucide-react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -21,6 +21,16 @@ import {
   type GmbKpiRow,
 } from "@/lib/overview-gmb-social-data";
 
+const GMB_CHART_CARD_CLASS =
+  "rounded-2xl border border-neutral-800/50 bg-neutral-900/20 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-sm";
+
+const TOOLTIP_DARK = {
+  borderRadius: 12,
+  border: "1px solid rgba(82,82,82,0.8)",
+  background: "#0a0a0a",
+  color: "#e5e5e5",
+} as const;
+
 const cardHover =
   "transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md";
 
@@ -39,33 +49,25 @@ function GmbKpiCard({ kpi, i }: { kpi: GmbKpiRow; i: number }) {
 
   const pillClass =
     kpi.tone === "up"
-      ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/80"
+      ? "bg-emerald-950/35 text-emerald-300 ring-1 ring-emerald-800/50"
       : kpi.tone === "down"
-        ? "bg-red-50 text-red-700 ring-1 ring-red-200/80"
-        : "bg-slate-100 text-slate-600 ring-1 ring-slate-200/80";
+        ? "bg-red-950/35 text-red-300 ring-1 ring-red-900/45"
+        : "bg-neutral-800/50 text-neutral-400 ring-1 ring-neutral-700/80";
 
   return (
     <div
-      className={`rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-sm ${cardHover}`}
+      className={`rounded-2xl border border-neutral-800/60 bg-neutral-900/30 p-4 backdrop-blur-md ${cardHover}`}
       style={{
         animation: `gmbKpiUp 0.45s ease both`,
         animationDelay: `${i * 35}ms`,
-        boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 2px 12px rgba(7,41,207,0.04)",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 40px rgba(0,0,0,0.35)",
       }}
     >
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="text-sm font-semibold leading-snug text-[#0f172a]">{t(kpi.labelKey)}</h3>
-        <button
-          type="button"
-          className="shrink-0 rounded-md p-0.5 text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#64748b]"
-          title={t(kpi.helpKey)}
-          aria-label={t(kpi.helpKey)}
-        >
-          <CircleHelp className="h-4 w-4" />
-        </button>
+      <div className="flex items-start gap-2">
+        <h3 className="text-xs font-medium uppercase leading-snug tracking-widest text-neutral-500">{t(kpi.labelKey)}</h3>
       </div>
 
-      <p className="mt-3 text-2xl font-bold tracking-tight text-[#0f172a]">{main}</p>
+      <p className="mt-3 text-2xl font-light tracking-tight text-neutral-100">{main}</p>
 
       {compareWithPrevious && (
         <>
@@ -77,8 +79,8 @@ function GmbKpiCard({ kpi, i }: { kpi: GmbKpiRow; i: number }) {
               {pct}
             </span>
           </div>
-          <p className="mt-3 text-xs text-[#64748b]">
-            <span className="font-medium text-[#94a3b8]">{t("overview.prevPeriodValue")}: </span>
+          <p className="mt-3 text-xs text-neutral-500">
+            <span className="font-medium text-neutral-600">{t("overview.prevPeriodValue")}: </span>
             {prevFormatted}
           </p>
         </>
@@ -90,27 +92,33 @@ function GmbKpiCard({ kpi, i }: { kpi: GmbKpiRow; i: number }) {
 function DailyViewsChart() {
   const { t, intlLocale } = useDashboardSettings();
   return (
-    <div
-      className="rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-sm"
-      style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 2px 12px rgba(7,41,207,0.04)" }}
-    >
-      <h3 className="mb-3 text-center text-sm font-semibold text-[#0f172a]">{t("gmb.chartDailyViews")}</h3>
+    <div className={GMB_CHART_CARD_CLASS}>
+      <h3 className="mb-4 text-center text-base font-medium tracking-tight text-neutral-200">{t("gmb.chartDailyViews")}</h3>
       <ResponsiveContainer width="100%" height={280}>
         <LineChart data={gmbDailySeries} margin={{ top: 12, right: 12, left: 0, bottom: 8 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-          <XAxis dataKey="dateLabel" tick={{ fontSize: 9, fill: "#94a3b8" }} interval={4} angle={-32} textAnchor="end" height={48} />
-          <YAxis tick={{ fontSize: 11, fill: "#64748b" }} />
+          <CartesianGrid strokeDasharray="4 4" stroke="rgba(64,64,64,0.45)" vertical={false} />
+          <XAxis
+            dataKey="dateLabel"
+            tick={{ fontSize: 9, fill: "#a3a3a3" }}
+            interval={4}
+            angle={-32}
+            textAnchor="end"
+            height={48}
+            axisLine={{ stroke: "rgba(82,82,82,0.6)" }}
+          />
+          <YAxis tick={{ fontSize: 11, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
           <Tooltip
-            contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0" }}
+            contentStyle={TOOLTIP_DARK}
+            labelStyle={{ color: "#a3a3a3" }}
             formatter={(v, name) => [formatCountIntl(Number(v ?? 0), intlLocale), String(name ?? "")]}
           />
           <Legend
-            wrapperStyle={{ fontSize: 11 }}
-            formatter={(value) => <span className="text-[#475569]">{value}</span>}
+            wrapperStyle={{ fontSize: 11, paddingTop: 8 }}
+            formatter={(value) => <span className="text-neutral-400">{value}</span>}
           />
-          <Line type="monotone" dataKey="total" name={t("gmb.series.total")} stroke={GMB_LINE_COLORS.total} strokeWidth={2} dot={false} />
-          <Line type="monotone" dataKey="pesquisas" name={t("gmb.series.search")} stroke={GMB_LINE_COLORS.search} strokeWidth={2} dot={false} />
-          <Line type="monotone" dataKey="mapas" name={t("gmb.series.maps")} stroke={GMB_LINE_COLORS.maps} strokeWidth={2} dot={false} />
+          <Line type="monotone" dataKey="total" name={t("gmb.series.total")} stroke={GMB_LINE_COLORS.total} strokeWidth={2.25} dot={false} activeDot={{ r: 4 }} />
+          <Line type="monotone" dataKey="pesquisas" name={t("gmb.series.search")} stroke={GMB_LINE_COLORS.search} strokeWidth={2} dot={false} activeDot={{ r: 3.5 }} />
+          <Line type="monotone" dataKey="mapas" name={t("gmb.series.maps")} stroke={GMB_LINE_COLORS.maps} strokeWidth={2} dot={false} activeDot={{ r: 3.5 }} />
         </LineChart>
       </ResponsiveContainer>
     </div>
@@ -124,28 +132,34 @@ function formatCountIntl(v: number, intlLocale: string) {
 function DailyActionsChart() {
   const { t, intlLocale } = useDashboardSettings();
   return (
-    <div
-      className="rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-sm"
-      style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 2px 12px rgba(7,41,207,0.04)" }}
-    >
-      <h3 className="mb-3 text-center text-sm font-semibold text-[#0f172a]">{t("gmb.chartDailyActions")}</h3>
+    <div className={GMB_CHART_CARD_CLASS}>
+      <h3 className="mb-4 text-center text-base font-medium tracking-tight text-neutral-200">{t("gmb.chartDailyActions")}</h3>
       <ResponsiveContainer width="100%" height={280}>
         <LineChart data={gmbDailySeries} margin={{ top: 12, right: 12, left: 0, bottom: 8 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-          <XAxis dataKey="dateLabel" tick={{ fontSize: 9, fill: "#94a3b8" }} interval={4} angle={-32} textAnchor="end" height={48} />
-          <YAxis tick={{ fontSize: 11, fill: "#64748b" }} domain={[0, "auto"]} />
+          <CartesianGrid strokeDasharray="4 4" stroke="rgba(64,64,64,0.45)" vertical={false} />
+          <XAxis
+            dataKey="dateLabel"
+            tick={{ fontSize: 9, fill: "#a3a3a3" }}
+            interval={4}
+            angle={-32}
+            textAnchor="end"
+            height={48}
+            axisLine={{ stroke: "rgba(82,82,82,0.6)" }}
+          />
+          <YAxis tick={{ fontSize: 11, fill: "#a3a3a3" }} domain={[0, "auto"]} axisLine={false} tickLine={false} />
           <Tooltip
-            contentStyle={{ borderRadius: 12, border: "1px solid #e2e8f0" }}
+            contentStyle={TOOLTIP_DARK}
+            labelStyle={{ color: "#a3a3a3" }}
             formatter={(v, name) => [formatCountIntl(Number(v ?? 0), intlLocale), String(name ?? "")]}
           />
-          <Legend wrapperStyle={{ fontSize: 10 }} formatter={(value) => <span className="text-[#475569]">{value}</span>} />
-          <Line type="monotone" dataKey="acoesTotal" name={t("gmb.series.actionsTotal")} stroke={GMB_LINE_COLORS.total} strokeWidth={2} dot={false} />
-          <Line type="monotone" dataKey="conversas" name={t("gmb.series.chat")} stroke={GMB_LINE_COLORS.chat} strokeWidth={1.8} dot={false} />
-          <Line type="monotone" dataKey="rotas" name={t("gmb.series.routes")} stroke={GMB_LINE_COLORS.routes} strokeWidth={1.8} dot={false} />
-          <Line type="monotone" dataKey="ligacoes" name={t("gmb.series.calls")} stroke={GMB_LINE_COLORS.calls} strokeWidth={1.8} dot={false} />
-          <Line type="monotone" dataKey="website" name={t("gmb.series.website")} stroke={GMB_LINE_COLORS.website} strokeWidth={1.8} dot={false} />
-          <Line type="monotone" dataKey="agendamentos" name={t("gmb.series.bookings")} stroke={GMB_LINE_COLORS.bookings} strokeWidth={1.8} dot={false} />
-          <Line type="monotone" dataKey="pedidos" name={t("gmb.series.orders")} stroke={GMB_LINE_COLORS.orders} strokeWidth={1.8} dot={false} />
+          <Legend wrapperStyle={{ fontSize: 10, paddingTop: 6 }} formatter={(value) => <span className="text-neutral-400">{value}</span>} />
+          <Line type="monotone" dataKey="acoesTotal" name={t("gmb.series.actionsTotal")} stroke={GMB_LINE_COLORS.total} strokeWidth={2.25} dot={false} activeDot={{ r: 4 }} />
+          <Line type="monotone" dataKey="conversas" name={t("gmb.series.chat")} stroke={GMB_LINE_COLORS.chat} strokeWidth={1.75} dot={false} activeDot={{ r: 3 }} />
+          <Line type="monotone" dataKey="rotas" name={t("gmb.series.routes")} stroke={GMB_LINE_COLORS.routes} strokeWidth={1.75} dot={false} activeDot={{ r: 3 }} />
+          <Line type="monotone" dataKey="ligacoes" name={t("gmb.series.calls")} stroke={GMB_LINE_COLORS.calls} strokeWidth={1.75} dot={false} activeDot={{ r: 3 }} />
+          <Line type="monotone" dataKey="website" name={t("gmb.series.website")} stroke={GMB_LINE_COLORS.website} strokeWidth={1.75} dot={false} activeDot={{ r: 3 }} />
+          <Line type="monotone" dataKey="agendamentos" name={t("gmb.series.bookings")} stroke={GMB_LINE_COLORS.bookings} strokeWidth={1.75} dot={false} activeDot={{ r: 3 }} />
+          <Line type="monotone" dataKey="pedidos" name={t("gmb.series.orders")} stroke={GMB_LINE_COLORS.orders} strokeWidth={1.75} dot={false} activeDot={{ r: 3 }} />
         </LineChart>
       </ResponsiveContainer>
     </div>
@@ -159,12 +173,12 @@ export default function GmbBusinessSection() {
     <section className="space-y-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#e2e8f0] bg-[#f8fafc]">
-            <IconGoogleBusiness className="h-6 w-6 text-[#4285F4]" />
+          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-neutral-700 bg-neutral-900/50">
+            <IconGoogleBusiness className="h-6 w-6 text-sky-400" />
           </span>
           <div>
-            <h2 className="text-base font-semibold text-[#0f172a]">{t("overview.sectionGmb")}</h2>
-            <p className="mt-0.5 text-xs text-[#64748b]">{t("overview.sectionGmbHint")}</p>
+            <h2 className="text-base font-semibold tracking-tight text-neutral-100">{t("overview.sectionGmb")}</h2>
+            <p className="mt-0.5 text-xs font-light text-neutral-500">{t("overview.sectionGmbHint")}</p>
           </div>
         </div>
       </div>

@@ -126,7 +126,7 @@ export const metaKpiRows: MetaKpiRow[] = [
     prev: 7761.11,
     changePct: -1.12,
     showTrend: true,
-    goodWhen: "higher",
+    goodWhen: "neutral",
   },
   {
     id: "impressions",
@@ -210,7 +210,7 @@ export const metaKpiRows: MetaKpiRow[] = [
     prev: 4.23,
     changePct: 11.92,
     showTrend: true,
-    goodWhen: "higher",
+    goodWhen: "lower",
   },
   {
     id: "purchases",
@@ -222,7 +222,7 @@ export const metaKpiRows: MetaKpiRow[] = [
     prev: 0,
     changePct: 0,
     showTrend: true,
-    goodWhen: "neutral",
+    goodWhen: "higher",
   },
   {
     id: "costPerPurchase",
@@ -234,7 +234,7 @@ export const metaKpiRows: MetaKpiRow[] = [
     prev: 0,
     changePct: 0,
     showTrend: true,
-    goodWhen: "neutral",
+    goodWhen: "lower",
   },
   {
     id: "purchaseConversionValue",
@@ -244,7 +244,7 @@ export const metaKpiRows: MetaKpiRow[] = [
     kind: "money",
     current: 0,
     showTrend: false,
-    goodWhen: "neutral",
+    goodWhen: "higher",
   },
   {
     id: "sitePurchaseRoas",
@@ -254,7 +254,7 @@ export const metaKpiRows: MetaKpiRow[] = [
     kind: "plain",
     current: 0,
     showTrend: false,
-    goodWhen: "neutral",
+    goodWhen: "higher",
   },
   {
     id: "leads",

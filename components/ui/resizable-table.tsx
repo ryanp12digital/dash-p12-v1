@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Resizable } from "react-resizable";
 import "react-resizable/css/styles.css";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { DASHBOARD_SCROLLBAR_CLASS, DASHBOARD_TABLE_BODY_VERTICAL_SCROLL_CLASS } from "@/lib/dashboard-layout";
 
 export type ResizableTableAlign = "left" | "right";
 
@@ -26,6 +27,34 @@ export type ResizableTableColumn<T> = {
   sortValue?: (row: T) => ResizableTableSortValue;
 };
 
+const VARIANT_STYLES = {
+  light: {
+    cardClassName:
+      "rounded-2xl border border-[#e2e8f0] bg-white/95 shadow-[0_4px_20px_rgba(7,41,207,0.06),0_1px_4px_rgba(0,0,0,0.04)]",
+    headerClassName: "bg-[#f8fafc] text-[10px] font-bold uppercase tracking-wider text-[#64748b]",
+    bodyRowHoverClassName: "hover:bg-[#f8fafc]/90",
+    border: "border-[#f1f5f9]",
+    headerBorder: "border-[#f1f5f9]",
+    resizeHandle: "bg-[#e2e8f0] group-hover/col:bg-[#0729cf]",
+    sortActive: "text-[#0729cf]",
+    sortHover: "hover:text-[#0f172a]",
+    emptyText: "text-[#64748b]",
+  },
+  dark: {
+    cardClassName:
+      "rounded-2xl border border-neutral-800/60 bg-neutral-900/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_12px_40px_rgba(0,0,0,0.35)] backdrop-blur-md",
+    headerClassName:
+      "bg-neutral-950/95 text-[10px] font-bold uppercase tracking-wider text-neutral-500 backdrop-blur-sm",
+    bodyRowHoverClassName: "hover:bg-neutral-800/35",
+    border: "border-neutral-800/50",
+    headerBorder: "border-neutral-800/50",
+    resizeHandle: "bg-neutral-700 group-hover/col:bg-cyan-500",
+    sortActive: "text-cyan-400",
+    sortHover: "hover:text-neutral-100",
+    emptyText: "text-neutral-500",
+  },
+} as const;
+
 export function ResizableTable<T>({
   tableId,
   columns,
@@ -33,11 +62,13 @@ export function ResizableTable<T>({
   rowKey,
   emptyState,
   className,
-  cardClassName = "bg-white/95 border border-[#e2e8f0] shadow-[0_4px_20px_rgba(7,41,207,0.06),0_1px_4px_rgba(0,0,0,0.04)] rounded-2xl overflow-hidden",
-  headerClassName = "bg-[#f8fafc] text-[10px] font-bold uppercase tracking-wider text-[#64748b]",
-  bodyRowHoverClassName = "hover:bg-[#f8fafc]/90",
+  variant = "light",
+  cardClassName,
+  headerClassName,
+  bodyRowHoverClassName,
   onColumnResize,
   defaultSort,
+  bodyScrollClassName,
 }: {
   tableId: string;
   columns: ResizableTableColumn<T>[];
@@ -45,12 +76,22 @@ export function ResizableTable<T>({
   rowKey: (row: T) => string;
   emptyState: React.ReactNode;
   className?: string;
+  /** `light` (padrão) ou `dark` (glass, alinhado ao tema Pulse). */
+  variant?: keyof typeof VARIANT_STYLES;
   cardClassName?: string;
   headerClassName?: string;
   bodyRowHoverClassName?: string;
   onColumnResize?: (columnKey: string, width: number) => void;
   defaultSort?: { key: string; dir: ResizableTableSortDir };
+  /** Classes Tailwind para a área rolável das linhas (altura máxima + overflow-y). Padrão: scroll do dashboard. */
+  bodyScrollClassName?: string;
 }) {
+  const vs = VARIANT_STYLES[variant];
+  const resolvedCard = cardClassName ?? vs.cardClassName;
+  const resolvedHeader = headerClassName ?? vs.headerClassName;
+  const resolvedHover = bodyRowHoverClassName ?? vs.bodyRowHoverClassName;
+  const b = vs.border;
+  const resolvedBodyScroll = bodyScrollClassName ?? DASHBOARD_TABLE_BODY_VERTICAL_SCROLL_CLASS;
   const storageKey = `p12-resizable-table-widths:${tableId}`;
   const sortStorageKey = `p12-resizable-table-sort:${tableId}`;
 
@@ -200,10 +241,13 @@ export function ResizableTable<T>({
 
   return (
     <div className={className}>
-      <div className={cardClassName}>
-        <div className="overflow-x-auto">
-          <div className="min-h-full">
-            <div className={`flex py-3 ${headerClassName} border-b border-[#f1f5f9]`} style={{ minWidth: totalWidth }}>
+      <div className={resolvedCard}>
+        <div className={`overflow-x-auto overscroll-x-contain ${DASHBOARD_SCROLLBAR_CLASS}`}>
+          <div className="min-h-0">
+            <div
+              className={`sticky top-0 z-20 flex py-3 ${resolvedHeader} border-b ${vs.headerBorder}`}
+              style={{ minWidth: totalWidth }}
+            >
               {columns.map((c, idx) => {
                 const w = widths[c.key] ?? c.width;
                 const minW = c.minWidth ?? 80;
@@ -231,12 +275,14 @@ export function ResizableTable<T>({
                         className="react-resizable-handle react-resizable-handle-e right-0 top-0 h-full w-4 cursor-col-resize bg-none after:content-none"
                         aria-hidden
                       >
-                        <span className="pointer-events-none absolute right-1.5 top-0 h-full w-[2px] rounded-full bg-[#e2e8f0] opacity-0 transition-all duration-150 group-hover/col:opacity-100 group-hover/col:bg-[#0729cf]" />
+                        <span
+                          className={`pointer-events-none absolute right-1.5 top-0 h-full w-[2px] rounded-full opacity-0 transition-all duration-150 group-hover/col:opacity-100 ${vs.resizeHandle}`}
+                        />
                       </span>
                     }
                   >
                     <div
-                      className={`group/col relative flex items-center overflow-hidden px-4 sm:px-6 ${isLast ? "" : "border-r border-[#f1f5f9]"} ${c.className ?? ""}`}
+                      className={`group/col relative flex items-center overflow-hidden px-4 sm:px-6 ${isLast ? "" : `border-r ${b}`} ${c.className ?? ""}`}
                       style={{ width: w, flexShrink: 0 }}
                       aria-label={typeof c.header === "string" ? c.header : c.key}
                     >
@@ -253,14 +299,14 @@ export function ResizableTable<T>({
                           setSortDir((d) => (d === "desc" ? "asc" : "desc"));
                         }}
                         className={`flex min-w-0 items-center gap-2 ${align === "right" ? "ml-auto" : ""} ${
-                          sortable ? "cursor-pointer hover:text-[#0f172a]" : "cursor-default"
+                          sortable ? `cursor-pointer ${vs.sortHover}` : "cursor-default"
                         }`}
                         aria-pressed={active ? true : undefined}
                         aria-label={sortable ? `Ordenar por ${typeof c.header === "string" ? c.header : c.key}` : undefined}
                       >
                         <span className="min-w-0 truncate">{c.header}</span>
                         {active && (
-                          <span className="shrink-0 text-[#0729cf]" aria-hidden>
+                          <span className={`shrink-0 ${vs.sortActive}`} aria-hidden>
                             {sortDir === "asc" ? <ArrowUp className="h-3.5 w-3.5" /> : <ArrowDown className="h-3.5 w-3.5" />}
                           </span>
                         )}
@@ -272,13 +318,13 @@ export function ResizableTable<T>({
             </div>
 
             {sortedRows.length === 0 ? (
-              <div className="px-4 py-6 text-center text-sm text-[#64748b]">{emptyState}</div>
+              <div className={`px-4 py-6 text-center text-sm ${vs.emptyText}`}>{emptyState}</div>
             ) : (
-              <div style={{ minWidth: totalWidth }}>
+              <div className={resolvedBodyScroll} style={{ width: totalWidth }}>
                 {sortedRows.map((row) => (
                   <div
                     key={rowKey(row)}
-                    className={`py-3.5 group relative transition-all duration-150 border-b border-[#f1f5f9] flex ${bodyRowHoverClassName}`}
+                    className={`py-3.5 group relative transition-all duration-150 border-b ${b} flex ${resolvedHover}`}
                   >
                     {columns.map((c, idx) => {
                       const w = widths[c.key] ?? c.width;
@@ -287,7 +333,7 @@ export function ResizableTable<T>({
                       return (
                         <div
                           key={c.key}
-                          className={`flex items-center min-w-0 overflow-hidden px-4 sm:px-6 ${isLast ? "" : "border-r border-[#f1f5f9]"} ${c.cellClassName ?? ""}`}
+                          className={`flex items-center min-w-0 overflow-hidden px-4 sm:px-6 ${isLast ? "" : `border-r ${b}`} ${c.cellClassName ?? ""}`}
                           style={{ width: w, flexShrink: 0 }}
                         >
                           <div className={`min-w-0 w-full ${align === "right" ? "flex justify-end text-right" : "text-left"}`}>{c.render(row)}</div>

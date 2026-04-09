@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  CircleHelp,
   TrendingDown,
   TrendingUp,
   Minus,
@@ -10,11 +9,30 @@ import {
   X,
   Expand,
   MinusSquare,
+  GripVertical,
 } from "lucide-react";
 import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
 import { metaKpiRows, type MetaKpiRow } from "@/lib/meta-ads-data";
 import { useMetaAdsData } from "@/components/meta/MetaAdsDataContext";
 import { DASHBOARD_SECTION_STACK_CLASS } from "@/lib/dashboard-layout";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  KeyboardSensor,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  rectSortingStrategy,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const cardHover =
   "transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md";
@@ -33,16 +51,32 @@ function trendVisual(row: MetaKpiRow): "good" | "bad" | "neutral" {
   return "neutral";
 }
 
+/** Direção numérica da variação (ícone), independente de ser “bom” ou “ruim” para a métrica. */
+function changeDirection(row: MetaKpiRow): "up" | "down" | "flat" {
+  if (row.changePct != null) {
+    if (row.changePct > 0) return "up";
+    if (row.changePct < 0) return "down";
+    return "flat";
+  }
+  if (row.changeAbs != null) {
+    if (row.changeAbs > 0) return "up";
+    if (row.changeAbs < 0) return "down";
+    return "flat";
+  }
+  return "flat";
+}
+
 function MetaKpiCard({ row, i, wide }: { row: MetaKpiRow; i: number; wide: boolean }) {
   const { t, intlLocale, formatDisplayCurrencyAmount, formatCount } = useDashboardSettings();
   const tv = trendVisual(row);
+  const dir = changeDirection(row);
 
   const pillClass =
     tv === "good"
-      ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/80"
+      ? "bg-emerald-950/50 text-emerald-200 ring-1 ring-emerald-800/55 shadow-[0_0_12px_rgba(16,185,129,0.12)]"
       : tv === "bad"
-        ? "bg-red-50 text-red-700 ring-1 ring-red-200/80"
-        : "bg-slate-100 text-slate-600 ring-1 ring-slate-200/80";
+        ? "bg-red-950/45 text-red-200 ring-1 ring-red-900/50 shadow-[0_0_12px_rgba(239,68,68,0.1)]"
+        : "bg-neutral-800/55 text-neutral-400 ring-1 ring-neutral-700/70";
 
   let main = "";
   if (row.kind === "money") {
@@ -81,45 +115,81 @@ function MetaKpiCard({ row, i, wide }: { row: MetaKpiRow; i: number; wide: boole
 
   return (
     <div
-      className={`flex h-[132px] flex-col justify-between overflow-hidden rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-sm ${cardHover} ${wideClass}`}
+      className={`group relative flex min-h-[164px] flex-col justify-between overflow-hidden rounded-2xl border border-neutral-800/60 bg-neutral-900/30 p-5 backdrop-blur-md ${cardHover} ${wideClass}`}
       style={{
         animation: `metaKpiUp 0.4s ease both`,
         animationDelay: `${i * 28}ms`,
-        boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 2px 12px rgba(7,41,207,0.04)",
       }}
     >
-      <div className="flex items-start justify-center gap-1.5">
-        <h3 className="min-w-0 flex-1 truncate text-center text-sm font-semibold leading-snug text-[#0f172a]">
+      <div className="mb-4 flex items-start justify-center gap-1.5">
+        <h3 className="min-w-0 flex-1 truncate text-center text-xs font-medium leading-snug tracking-widest text-neutral-500 uppercase">
           {t(row.labelKey)}
         </h3>
-        <button
-          type="button"
-          className="shrink-0 rounded-md p-0.5 text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#64748b]"
-          title={t(row.helpKey)}
-          aria-label={t(row.helpKey)}
-        >
-          <CircleHelp className="h-4 w-4" />
-        </button>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-baseline justify-between gap-2">
-        <p className="text-2xl font-bold tracking-tight text-[#0f172a]">{main}</p>
+      <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2">
+        <p className="text-4xl leading-none font-light tracking-tight text-neutral-100">{main}</p>
         <span
           className={`inline-flex shrink-0 items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-semibold ${pillClass}`}
           style={{ visibility: hasTrend ? "visible" : "hidden" }}
           aria-hidden={!hasTrend}
+          title={
+            hasTrend
+              ? tv === "good"
+                ? t("meta.trendGoodHint")
+                : tv === "bad"
+                  ? t("meta.trendBadHint")
+                  : undefined
+              : undefined
+          }
         >
-          {tv === "good" && <TrendingUp className="h-3.5 w-3.5" aria-hidden />}
-          {tv === "bad" && <TrendingDown className="h-3.5 w-3.5" aria-hidden />}
-          {tv === "neutral" && <Minus className="h-3.5 w-3.5 opacity-70" aria-hidden />}
+          {dir === "up" && <TrendingUp className="h-3.5 w-3.5 shrink-0 opacity-95" aria-hidden />}
+          {dir === "down" && <TrendingDown className="h-3.5 w-3.5 shrink-0 opacity-95" aria-hidden />}
+          {dir === "flat" && <Minus className="h-3.5 w-3.5 shrink-0 opacity-70" aria-hidden />}
           {changePctStr ?? changeAbsStr}
         </span>
       </div>
 
-      <p className="mt-2 text-xs text-[#64748b]" style={{ visibility: showPrev ? "visible" : "hidden" }}>
-        <span className="font-medium text-[#94a3b8]">{t("meta.prevPeriodLine")} </span>
+      <p className="mt-3 text-xs text-neutral-500" style={{ visibility: showPrev ? "visible" : "hidden" }}>
+        <span className="font-medium text-neutral-600">{t("meta.prevPeriodLine")} </span>
         {prevFormatted}
       </p>
+    </div>
+  );
+}
+
+function SortableMetaKpiCard({
+  row,
+  i,
+  wide,
+}: {
+  row: MetaKpiRow;
+  i: number;
+  wide: boolean;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: row.id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.45 : 1,
+        zIndex: isDragging ? 50 : undefined,
+      }}
+      className="group relative"
+    >
+      <button
+        {...attributes}
+        {...listeners}
+        type="button"
+        className="absolute top-2 right-2 z-10 cursor-grab touch-none rounded-md p-0.5 text-[#cbd5e1] opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing"
+        aria-label="Arrastar card"
+      >
+        <GripVertical className="h-4 w-4" />
+      </button>
+      <MetaKpiCard row={row} i={i} wide={wide} />
     </div>
   );
 }
@@ -227,7 +297,18 @@ export default function MetaAdsKpiGrid() {
     setWideById((prev) => ({ ...prev, [id]: !(prev[id] ?? false) }));
   };
 
-  const draggingIdRef = useRef<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
   const reorderById = (dragId: string, dropId: string) => {
     setSelectedIds((prev) => {
       const a = prev.indexOf(dragId);
@@ -238,6 +319,19 @@ export default function MetaAdsKpiGrid() {
       next.splice(b, 0, dragId);
       return next;
     });
+  };
+
+  const activeRow = activeId ? selectedRows.find((r) => r.id === activeId) : null;
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(String(event.active.id));
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null);
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    reorderById(String(active.id), String(over.id));
   };
 
   return (
@@ -380,39 +474,39 @@ export default function MetaAdsKpiGrid() {
           {t("meta.kpiLayoutNoneSelected")}
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {selectedRows.map((row, i) => {
-            const wide = wideById[row.id] ?? Boolean(row.wide);
-            return (
-              <div
-                key={row.id}
-                draggable={editorOpen}
-                onDragStart={(e) => {
-                  if (!editorOpen) return;
-                  draggingIdRef.current = row.id;
-                  e.dataTransfer.effectAllowed = "move";
-                  e.dataTransfer.setData("text/plain", row.id);
-                }}
-                onDragOver={(e) => {
-                  if (!editorOpen) return;
-                  e.preventDefault();
-                  e.dataTransfer.dropEffect = "move";
-                }}
-                onDrop={(e) => {
-                  if (!editorOpen) return;
-                  e.preventDefault();
-                  const dragId = e.dataTransfer.getData("text/plain") || draggingIdRef.current;
-                  if (!dragId) return;
-                  reorderById(dragId, row.id);
-                  draggingIdRef.current = null;
-                }}
-                className={editorOpen ? "cursor-grab active:cursor-grabbing" : undefined}
-              >
-                <MetaKpiCard row={row} i={i} wide={wide} />
-              </div>
-            );
-          })}
-        </div>
+        <>
+          {!mounted ? (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {selectedRows.map((row, i) => {
+                const wide = wideById[row.id] ?? Boolean(row.wide);
+                return <MetaKpiCard key={row.id} row={row} i={i} wide={wide} />;
+              })}
+            </div>
+          ) : (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={selectedRows.map((row) => row.id)} strategy={rectSortingStrategy}>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  {selectedRows.map((row, i) => {
+                    const wide = wideById[row.id] ?? Boolean(row.wide);
+                    return <SortableMetaKpiCard key={row.id} row={row} i={i} wide={wide} />;
+                  })}
+                </div>
+              </SortableContext>
+              <DragOverlay>
+                {activeRow ? (
+                  <div className="rotate-1 scale-[1.02]">
+                    <MetaKpiCard row={activeRow} i={0} wide={wideById[activeRow.id] ?? Boolean(activeRow.wide)} />
+                  </div>
+                ) : null}
+              </DragOverlay>
+            </DndContext>
+          )}
+        </>
       )}
 
       <style>{`
