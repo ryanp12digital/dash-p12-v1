@@ -4,7 +4,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -39,7 +38,7 @@ type DashboardSettingsContextValue = {
 
 const DashboardSettingsContext = createContext<DashboardSettingsContextValue | null>(null);
 
-const FALLBACK_RATE = 5.5;
+const FALLBACK_RATE = Number(process.env.NEXT_PUBLIC_FALLBACK_USD_BRL ?? 5.5);
 
 function initialOverviewChannelAccounts(): Record<OverviewChannelKey, string> {
   const first = AD_ACCOUNTS[0].id;
@@ -56,31 +55,9 @@ export function DashboardSettingsProvider({ children }: { children: ReactNode })
   const [accountId, setAccountId] = useState(AD_ACCOUNTS[0].id);
   const [accountIdByOverviewChannel, setAccountIdByOverviewChannel] =
     useState<Record<OverviewChannelKey, string>>(initialOverviewChannelAccounts);
-  const [usdToBrl, setUsdToBrl] = useState<number | null>(null);
 
   const setOverviewChannelAccountId = useCallback((channel: OverviewChannelKey, id: string) => {
     setAccountIdByOverviewChannel((prev) => ({ ...prev, [channel]: id }));
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/exchange-rate`)
-      .then((r) => r.json())
-      .then((d: { rate?: number }) => {
-        if (cancelled) return;
-        if (typeof d.rate === "number" && Number.isFinite(d.rate)) {
-          setUsdToBrl(d.rate);
-        } else {
-          setUsdToBrl(FALLBACK_RATE);
-        }
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setUsdToBrl(FALLBACK_RATE);
-      });
-    return () => {
-      cancelled = true;
-    };
   }, []);
 
   const account = useMemo(() => AD_ACCOUNTS.find((a) => a.id === accountId) ?? AD_ACCOUNTS[0], [accountId]);
@@ -92,7 +69,7 @@ export function DashboardSettingsProvider({ children }: { children: ReactNode })
 
   const t = useCallback((key: string) => translate(locale, key), [locale]);
 
-  const rate = usdToBrl ?? FALLBACK_RATE;
+  const rate = Number.isFinite(FALLBACK_RATE) ? FALLBACK_RATE : 5.5;
 
   const convertMoneyUsdToDisplay = useCallback(
     (usd: number) => {

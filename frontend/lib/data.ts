@@ -151,7 +151,7 @@ export type CampaignRow = {
 
 export const campaigns: CampaignRow[] = [
   {
-    name: "Summer Promotion 2024",
+    name: "[P12][PLJP][CBO][ENG][VV][ABERTO][01/12]",
     statusKey: "status.active",
     channelKey: "pmax",
     budgetUsdPerDay: 500,
@@ -163,7 +163,7 @@ export const campaigns: CampaignRow[] = [
     highlight: true,
   },
   {
-    name: "Brand Awareness - Global",
+    name: "[P12][PLJP][CBO][ENG][VV][ABERTO][03/12]",
     statusKey: "status.active",
     channelKey: "youtube",
     budgetUsdPerDay: 200,
@@ -175,7 +175,7 @@ export const campaigns: CampaignRow[] = [
     highlight: false,
   },
   {
-    name: "Product Launch Retargeting",
+    name: "[P12][PLJP][CBO][ENG][VV][PAUSADO][15/11]",
     statusKey: "status.paused",
     channelKey: "search",
     budgetUsdPerDay: 100,

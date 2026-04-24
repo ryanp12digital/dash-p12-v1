@@ -1,23 +1,125 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pencil } from "lucide-react";
 import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
-import { metaFeaturedCampaigns } from "@/lib/meta-ads-data";
+import { metaFeaturedCampaigns, metaFeaturedAds } from "@/lib/meta-ads-data";
 import { ResizableTable, type ResizableTableColumn } from "@/components/ui/resizable-table";
 import TableEditModal, { type TableEditMetric } from "@/components/ui/table-edit-modal";
+import { useMetaAdsData } from "@/components/meta/MetaAdsDataContext";
+import { useOverviewScope } from "@/components/OverviewScopeContext";
 
 const tableCardClass =
   "rounded-2xl border border-neutral-800/60 bg-neutral-900/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_12px_40px_rgba(0,0,0,0.35)] backdrop-blur-md";
 
+const isLikelyActiveCampaign = (name: string) => !/\[(PAUSADO|PAUSED|INATIVO|INACTIVE)\]/i.test(name);
+
 export default function MetaFeaturedCampaignsTable() {
   const { t, formatDisplayCurrencyAmount, formatCount, intlLocale } = useDashboardSettings();
+  const { selectedAccountId, hasTokenConfigured } = useMetaAdsData();
+  const { dateFrom, dateTo } = useOverviewScope();
   const [editOpen, setEditOpen] = useState(false);
+  const [rows, setRows] = useState(() => metaFeaturedCampaigns.filter((row) => isLikelyActiveCampaign(row.name)));
 
-  const fmtPct = (n: number) =>
-    `${new Intl.NumberFormat(intlLocale, { maximumFractionDigits: 2 }).format(n)}%`;
+  useEffect(() => {
+    if (!selectedAccountId || hasTokenConfigured === false) {
+      setRows(metaFeaturedCampaigns.filter((row) => isLikelyActiveCampaign(row.name)));
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      try {
+        const params = new URLSearchParams({
+          accountId: selectedAccountId,
+          since: dateFrom,
+          until: dateTo,
+          limit: "100",
+        });
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meta/featured-ads?${params.toString()}`);
+        const data = (await res.json()) as { ads?: typeof metaFeaturedAds; error?: string };
+        if (!res.ok) throw new Error(data.error ?? res.statusText);
+        if (cancelled) return;
 
-  const columns = useMemo<ResizableTableColumn<(typeof metaFeaturedCampaigns)[number]>[]>(
+        const ads = (data.ads ?? []).filter((ad) => isLikelyActiveCampaign(ad.campaignName));
+        if (ads.length === 0) {
+          setRows(metaFeaturedCampaigns.filter((row) => isLikelyActiveCampaign(row.name)));
+          return;
+        }
+
+        const byCampaign = new Map<string, (typeof metaFeaturedCampaigns)[number]>();
+        const campaignAdCount = new Map<string, number>();
+
+        for (const ad of ads) {
+          const key = ad.campaignName.trim();
+          const resultValue = Number(ad.resultValue.replace(/\./g, "").replace(",", ".")) || 0;
+          campaignAdCount.set(key, (campaignAdCount.get(key) ?? 0) + 1);
+          const current = byCampaign.get(key);
+          if (!current) {
+            byCampaign.set(key, {
+              name: key,
+              resultValue: String(resultValue),
+              resultLabelKey: ad.resultLabelKey,
+              costPerResultBrl: ad.costPerResultBrl,
+              spent: ad.spent,
+              reach: ad.reach,
+              impressions: ad.impressions,
+              linkClicks: ad.linkClicks,
+              ctr: ad.ctr,
+              cpc: ad.cpc,
+              cpm: ad.cpm,
+              frequency: ad.frequency,
+            });
+            continue;
+          }
+
+          current.resultValue = String((Number(current.resultValue) || 0) + resultValue);
+          current.spent += ad.spent;
+          current.reach += ad.reach;
+          current.impressions += ad.impressions;
+          current.linkClicks += ad.linkClicks;
+          current.ctr += ad.ctr;
+          current.cpc += ad.cpc;
+          current.cpm += ad.cpm;
+          current.frequency += ad.frequency;
+          current.resultLabelKey = ad.resultLabelKey;
+        }
+
+        const aggregated = Array.from(byCampaign.values()).map((campaign) => {
+          const adCount = campaignAdCount.get(campaign.name) ?? 1;
+          const safeResults = Number(campaign.resultValue) || 0;
+          const costPerResult = safeResults > 0 ? campaign.spent / safeResults : campaign.costPerResultBrl;
+          return {
+            ...campaign,
+            costPerResultBrl: costPerResult,
+            ctr: campaign.ctr / adCount,
+            cpc: campaign.cpc / adCount,
+            cpm: campaign.cpm / adCount,
+            frequency: campaign.frequency / adCount,
+            resultValue: String(safeResults),
+          };
+        });
+
+        setRows(
+          (aggregated.length > 0 ? aggregated : metaFeaturedCampaigns).filter((row) =>
+            isLikelyActiveCampaign(row.name),
+          ),
+        );
+      } catch {
+        if (!cancelled) setRows(metaFeaturedCampaigns.filter((row) => isLikelyActiveCampaign(row.name)));
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedAccountId, hasTokenConfigured, dateFrom, dateTo]);
+
+  const fmtPct = useCallback(
+    (n: number) => `${new Intl.NumberFormat(intlLocale, { maximumFractionDigits: 2 }).format(n)}%`,
+    [intlLocale],
+  );
+
+  const columns = useMemo<ResizableTableColumn<(typeof rows)[number]>[]>(
     () => [
       {
         key: "campaignName",
@@ -166,7 +268,7 @@ export default function MetaFeaturedCampaignsTable() {
         ),
       },
     ],
-    [t, formatDisplayCurrencyAmount, formatCount, intlLocale],
+    [t, formatDisplayCurrencyAmount, formatCount, intlLocale, fmtPct],
   );
 
   const storageKey = "p12-table-layout:meta-featured-campaigns";
@@ -197,8 +299,7 @@ export default function MetaFeaturedCampaignsTable() {
     } catch {
       // ignore
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [storageKey]);
 
   useEffect(() => {
     try {
@@ -209,7 +310,7 @@ export default function MetaFeaturedCampaignsTable() {
   }, [storageKey, columnOrder, hiddenKeys]);
 
   const columnsByKey = useMemo(() => {
-    const map = new Map<string, ResizableTableColumn<(typeof metaFeaturedCampaigns)[number]>>();
+    const map = new Map<string, ResizableTableColumn<(typeof rows)[number]>>();
     for (const c of columns) map.set(c.key, c);
     return map;
   }, [columns]);
@@ -220,7 +321,11 @@ export default function MetaFeaturedCampaignsTable() {
   );
 
   const visibleColumns = useMemo(
-    () => orderedColumnKeys.filter((k) => !hiddenKeys.includes(k)).map((k) => columnsByKey.get(k)).filter(Boolean) as ResizableTableColumn<(typeof metaFeaturedCampaigns)[number]>[],
+    () =>
+      orderedColumnKeys
+        .filter((k) => !hiddenKeys.includes(k))
+        .map((k) => columnsByKey.get(k))
+        .filter(Boolean) as ResizableTableColumn<(typeof rows)[number]>[],
     [orderedColumnKeys, hiddenKeys, columnsByKey],
   );
 
@@ -259,7 +364,7 @@ export default function MetaFeaturedCampaignsTable() {
         tableId="meta-featured-campaigns"
         variant="dark"
         columns={visibleColumns}
-        rows={metaFeaturedCampaigns}
+        rows={rows}
         rowKey={(row) => `${row.name}-${row.resultValue}-${row.resultLabelKey}`}
         emptyState="Nenhuma campanha encontrada."
         cardClassName="bg-transparent border-0 shadow-none rounded-none overflow-visible"

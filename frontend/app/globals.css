@@ -21,7 +21,16 @@ body {
     radial-gradient(ellipse 80% 50% at 18% -5%, rgba(55, 40, 10, 0.52) 0%, transparent 62%),
     radial-gradient(ellipse 60% 45% at 88% 108%, rgba(22, 15, 48, 0.62) 0%, transparent 62%);
   color: var(--foreground);
-  font-family: var(--font-syne), "DM Sans", sans-serif;
+  font-family: var(--font-alexandria), var(--font-poppins), "Segoe UI", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-poppins), var(--font-alexandria), "Segoe UI", sans-serif;
 }
 
 * {

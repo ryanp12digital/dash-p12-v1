@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Syne, DM_Mono } from "next/font/google";
+import { Alexandria, Poppins, DM_Mono } from "next/font/google";
 import "./globals.css";
 
-const syne = Syne({
+const alexandria = Alexandria({
   subsets: ["latin"],
-  variable: "--font-syne",
+  variable: "--font-alexandria",
   weight: ["400", "500", "600", "700", "800"],
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  variable: "--font-poppins",
+  weight: ["400", "500", "600", "700"],
 });
 
 const dmMono = DM_Mono({
@@ -26,7 +32,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${syne.variable} ${dmMono.variable} theme-pulse antialiased`}>{children}</body>
+      <body className={`${alexandria.variable} ${poppins.variable} ${dmMono.variable} theme-pulse antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }
