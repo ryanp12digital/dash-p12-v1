@@ -1,7 +1,8 @@
 """Meta Graph API — chamadas HTTP determinísticas. Porta de lib/meta-graph.ts."""
 import json
+import math
 import os
-from typing import Optional
+from typing import Literal, Optional
 import httpx
 
 DEFAULT_VERSION = "v21.0"
@@ -83,7 +84,7 @@ async def fetch_account_insights(
 
 
 async def fetch_account_insights_breakdown(
-    access_token: str, account_id: str, time_range: dict, breakdown: str
+    access_token: str, account_id: str, time_range: dict, breakdown: Literal["gender", "region"]
 ) -> list[dict]:
     act_id = account_id if account_id.startswith("act_") else f"act_{account_id}"
     params = {
@@ -163,7 +164,7 @@ def parse_number(v) -> Optional[float]:
         return None
     try:
         n = float(v)
-        return n if n == n and abs(n) != float("inf") else None
+        return n if math.isfinite(n) else None
     except (ValueError, TypeError):
         return None
 
