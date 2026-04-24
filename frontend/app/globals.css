@@ -1,40 +1,51 @@
 @import "tailwindcss";
 
 :root {
-  --background: #050505;
-  --foreground: #d4d4d4;
-  --surface: rgba(20, 20, 20, 0.86);
-  --surface-strong: rgba(10, 10, 10, 0.88);
-  --border: rgba(115, 115, 115, 0.62);
-  --text-primary: #fafafa;
-  --text-secondary: #d4d4d4;
-  --text-muted: #a3a3a3;
-  --accent: #67e8f9;
-  --accent-soft: rgba(103, 232, 249, 0.18);
+  --background: #080810;
+  --foreground: #E2DDD4;
+  --surface: rgba(16, 15, 26, 0.93);
+  --surface-strong: rgba(10, 9, 19, 0.96);
+  --border: rgba(100, 95, 120, 0.30);
+  --border-accent: rgba(232, 160, 32, 0.20);
+  --text-primary: #EDE8DE;
+  --text-secondary: #AEA898;
+  --text-muted: #6A6358;
+  --accent: #E8A020;
+  --accent-soft: rgba(232, 160, 32, 0.13);
+  --accent-glow: rgba(232, 160, 32, 0.26);
 }
 
 body {
   background: var(--background);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 18% -5%, rgba(55, 40, 10, 0.52) 0%, transparent 62%),
+    radial-gradient(ellipse 60% 45% at 88% 108%, rgba(22, 15, 48, 0.62) 0%, transparent 62%);
   color: var(--foreground);
-  font-family: "Inter", Arial, sans-serif;
+  font-family: var(--font-syne), "DM Sans", sans-serif;
 }
 
 * {
   box-sizing: border-box;
 }
 
+/* Fonte monoespaciada para valores numéricos de dados */
+.font-data {
+  font-family: var(--font-dm-mono), "Courier New", monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
 .theme-pulse {
   color-scheme: dark;
 }
 
-/* Base visual do design system de referência (dark + cyan glow). */
 .theme-pulse ::selection {
-  background: rgba(34, 211, 238, 0.2);
-  color: #cffafe;
+  background: rgba(232, 160, 32, 0.22);
+  color: #FDE68A;
 }
 
 .theme-pulse .bg-\[\#f5f6f8\] {
-  background: radial-gradient(ellipse at top right, rgba(38, 38, 38, 0.72) 0%, #050505 62%) !important;
+  background: radial-gradient(ellipse at top right, rgba(28, 24, 42, 0.82) 0%, var(--background) 65%) !important;
 }
 
 .theme-pulse .bg-white,
@@ -44,7 +55,6 @@ body {
 .theme-pulse .bg-\[\#f8fafc\]\/95 {
   background: var(--surface) !important;
   border-color: var(--border) !important;
-  backdrop-filter: blur(10px);
 }
 
 .theme-pulse .border-\[\#e2e8f0\],
@@ -79,20 +89,20 @@ body {
 .theme-pulse .text-\[\#0668E1\],
 .theme-pulse .text-blue-500 {
   color: var(--accent) !important;
-  text-shadow: 0 0 12px rgba(34, 211, 238, 0.32);
+  text-shadow: 0 0 16px var(--accent-glow);
 }
 
 .theme-pulse .bg-\[\#0729cf\],
 .theme-pulse .bg-\[\#0668E1\] {
   background: var(--accent) !important;
-  box-shadow: 0 0 16px rgba(103, 232, 249, 0.38);
+  box-shadow: 0 0 20px var(--accent-glow);
 }
 
 .theme-pulse .shadow-sm,
 .theme-pulse .shadow-md,
 .theme-pulse .shadow-xl,
 .theme-pulse .shadow-\[0_8px_32px_rgba\(7\2c 41\2c 207\2c 0\.10\)\2c 0_2px_8px_rgba\(0\2c 0\2c 0\2c 0\.06\)\] {
-  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.42), 0 3px 20px rgba(103, 232, 249, 0.1) !important;
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.50), 0 4px 22px rgba(232, 160, 32, 0.08) !important;
 }
 
 .theme-pulse .rounded-2xl {
@@ -100,24 +110,24 @@ body {
 }
 
 .theme-pulse table thead {
-  background: rgba(30, 30, 30, 0.88);
+  background: rgba(18, 16, 30, 0.94);
 }
 
 .theme-pulse tbody tr:hover {
-  background: rgba(64, 64, 64, 0.3) !important;
+  background: rgba(232, 160, 32, 0.04) !important;
 }
 
 .theme-pulse button:hover {
-  filter: brightness(1.12);
+  filter: brightness(1.1);
 }
 
 /**
- * Scrollbars finas, neutras (tabelas e áreas roláveis do dashboard).
- * Usar com a classe `dashboard-scroll` (exportada em lib/dashboard-layout como DASHBOARD_SCROLLBAR_CLASS).
+ * Scrollbars finas com tom âmbar sutil.
+ * Usar com a classe `dashboard-scroll` (lib/dashboard-layout).
  */
 .dashboard-scroll {
   scrollbar-width: thin;
-  scrollbar-color: rgba(82, 82, 82, 0.65) transparent;
+  scrollbar-color: rgba(110, 96, 55, 0.50) transparent;
 }
 
 .dashboard-scroll::-webkit-scrollbar {
@@ -130,14 +140,14 @@ body {
 }
 
 .dashboard-scroll::-webkit-scrollbar-thumb {
-  background: rgba(82, 82, 82, 0.55);
+  background: rgba(110, 96, 55, 0.45);
   border-radius: 9999px;
   border: 1px solid transparent;
   background-clip: padding-box;
 }
 
 .dashboard-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(115, 115, 115, 0.75);
+  background: rgba(155, 130, 65, 0.68);
   background-clip: padding-box;
 }
 

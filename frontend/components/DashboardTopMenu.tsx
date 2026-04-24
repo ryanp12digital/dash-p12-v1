@@ -30,7 +30,7 @@ export default function DashboardTopMenu() {
     >
       <nav
         aria-label={t("nav.main")}
-        className="flex items-center gap-1 rounded-2xl border border-neutral-800/60 bg-[#0a0a0a]/85 px-2 py-2 shadow-[0_16px_44px_rgba(0,0,0,0.45),0_2px_18px_rgba(34,211,238,0.08)] backdrop-blur-md"
+        className="flex items-center gap-1 rounded-2xl border border-[rgba(100,95,120,0.35)] bg-[rgba(10,9,19,0.88)] px-2 py-2 shadow-[0_16px_44px_rgba(0,0,0,0.52),0_2px_18px_rgba(232,160,32,0.08)] backdrop-blur-md"
       >
         {NAV.map(({ href, labelKey, Icon, iconColor }) => {
           const active = pathname === href || (href !== "/" && pathname.startsWith(href));
@@ -43,15 +43,15 @@ export default function DashboardTopMenu() {
               title={label}
               aria-label={label}
               aria-current={active ? "page" : undefined}
-              className={`group relative flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-150 ${
+              className={`group relative flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold transition-all duration-200 ${
                 active
-                  ? "bg-cyan-500/12 text-cyan-300 shadow-sm"
-                  : "text-neutral-400 hover:bg-neutral-800/50 hover:text-neutral-100"
+                  ? "bg-[rgba(232,160,32,0.11)] text-[#E8A020] shadow-sm"
+                  : "text-[#AEA898] hover:bg-[rgba(100,95,120,0.18)] hover:text-[#EDE8DE]"
               }`}
             >
               <Icon
-                className={`h-4 w-4 shrink-0 transition-colors duration-150 ${
-                  active ? "text-cyan-300" : "text-neutral-400"
+                className={`h-4 w-4 shrink-0 transition-colors duration-200 ${
+                  active ? "text-[#E8A020]" : "text-[#AEA898]"
                 }`}
                 aria-hidden
               />
@@ -66,7 +66,7 @@ export default function DashboardTopMenu() {
               {/* Active dot indicator */}
               {active && (
                 <span
-                  className="absolute -bottom-[13px] left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.9)]"
+                  className="absolute -bottom-[13px] left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-[#E8A020] shadow-[0_0_10px_rgba(232,160,32,0.85)]"
                   aria-hidden
                 />
               )}

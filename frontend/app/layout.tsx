@@ -1,8 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Syne, DM_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-syne",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  variable: "--font-dm-mono",
+  weight: ["300", "400", "500"],
+});
 
 export const metadata: Metadata = {
   title: "P12 Digital Dashboard",
@@ -16,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${inter.className} theme-pulse antialiased`}>{children}</body>
+      <body className={`${syne.variable} ${dmMono.variable} theme-pulse antialiased`}>{children}</body>
     </html>
   );
 }

@@ -27,9 +27,9 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const cardBase =
-  "group relative flex min-h-[164px] flex-col justify-between overflow-hidden rounded-2xl border border-neutral-800/60 bg-neutral-900/30 p-5 backdrop-blur-md";
+  "group relative flex min-h-[164px] flex-col justify-between overflow-hidden rounded-2xl border border-[rgba(100,95,120,0.28)] bg-[rgba(16,15,26,0.92)] p-5 transition-[border-color,box-shadow,transform] duration-300 ease-out";
 const cardHover =
-  "transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md";
+  "hover:-translate-y-0.5 hover:border-[rgba(232,160,32,0.20)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.36),0_0_24px_rgba(232,160,32,0.07)]";
 
 function formatChangePct(pct: number, intlLocale: string): string {
   if (pct === 0) return "0%";
@@ -77,22 +77,25 @@ function KpiCardContent({ kpi }: { kpi: KpiRow }) {
 
   const pillClass =
     kpi.tone === "up"
-      ? "bg-neutral-800/50 text-neutral-300"
+      ? "bg-emerald-950/70 text-emerald-400 border border-emerald-800/40"
       : kpi.tone === "down"
-        ? "bg-neutral-800/50 text-neutral-300"
-        : "bg-neutral-800/50 text-neutral-300";
+        ? "bg-rose-950/70 text-rose-400 border border-rose-800/40"
+        : "bg-neutral-900/60 text-[#6A6358] border border-[rgba(100,95,120,0.30)]";
 
   return (
     <>
+      {/* Linha de acento âmbar visível no hover */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(232,160,32,0.50)] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
       <div className="mb-4 flex items-start gap-2">
-        <h3 className="min-w-0 flex-1 truncate text-xs font-medium leading-snug tracking-widest text-neutral-500 uppercase">
+        <h3 className="min-w-0 flex-1 truncate text-[10px] font-semibold leading-snug tracking-[0.14em] text-[#6A6358] uppercase">
           {t(kpi.labelKey)}
         </h3>
       </div>
 
       <PlatformIcons platforms={kpi.platforms} />
 
-      <p className="mt-1 text-4xl leading-none font-light tracking-tight text-neutral-100">{main}</p>
+      <p className="font-data mt-1 text-4xl leading-none font-light tracking-tight text-[#EDE8DE]">{main}</p>
 
       {compareWithPrevious && (
         <>
@@ -104,8 +107,8 @@ function KpiCardContent({ kpi }: { kpi: KpiRow }) {
               {pct}
             </span>
           </div>
-          <p className="mt-3 text-xs text-neutral-500">
-            <span className="font-medium text-neutral-600">{t("overview.prevPeriodValue")}: </span>
+          <p className="mt-3 text-xs text-[#6A6358]">
+            <span className="font-medium text-[#6A6358]">{t("overview.prevPeriodValue")}: </span>
             {prevFormatted}
           </p>
         </>
@@ -125,8 +128,8 @@ function SortableKpiCard({ kpi, i }: { kpi: KpiRow; i: number }) {
     animation: isDragging ? undefined : `kpiSlideUp 0.45s ease both`,
     animationDelay: isDragging ? undefined : `${i * 40}ms`,
     boxShadow: isDragging
-      ? "0 8px 30px rgba(0,0,0,0.12), 0 4px 16px rgba(7,41,207,0.1)"
-      : "0 1px 3px rgba(0,0,0,0.06), 0 2px 12px rgba(7,41,207,0.04)",
+      ? "0 12px 36px rgba(0,0,0,0.40), 0 4px 16px rgba(232,160,32,0.10)"
+      : "0 1px 3px rgba(0,0,0,0.08), 0 2px 12px rgba(0,0,0,0.06)",
     opacity: isDragging ? 0.4 : 1,
     zIndex: isDragging ? 50 : undefined,
   };
@@ -157,7 +160,7 @@ function DragOverlayCard({ kpi }: { kpi: KpiRow }) {
     <div
       className={`${cardBase} rotate-1 scale-105`}
       style={{
-        boxShadow: "0 20px 40px rgba(0,0,0,0.15), 0 8px 20px rgba(7,41,207,0.12)",
+        boxShadow: "0 20px 48px rgba(0,0,0,0.42), 0 8px 20px rgba(232,160,32,0.10)",
       }}
     >
       <KpiCardContent kpi={kpi} />
@@ -242,7 +245,7 @@ function KpiGroup({
   if (!mounted) {
     return (
       <div>
-        <h3 className="mb-3 text-[11px] font-bold tracking-wider text-neutral-500 uppercase">
+        <h3 className="mb-3 text-[10px] font-semibold tracking-[0.14em] text-[#6A6358] uppercase">
           {t(titleKey)}
         </h3>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -258,7 +261,7 @@ function KpiGroup({
 
   return (
     <div>
-      <h3 className="mb-3 text-[11px] font-bold tracking-wider text-neutral-500 uppercase">
+      <h3 className="mb-3 text-[10px] font-semibold tracking-[0.14em] text-[#6A6358] uppercase">
         {t(titleKey)}
       </h3>
       <DndContext
