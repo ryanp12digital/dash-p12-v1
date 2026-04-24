@@ -258,7 +258,7 @@ export default function MetaAdsChartsSection() {
           since: dateFrom,
           until: dateTo,
         });
-        const res = await fetch(`/api/meta/audience-insights?${params.toString()}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meta/audience-insights?${params.toString()}`);
         const data = (await res.json()) as {
           gender?: { generoKey: string; impressoes: number; alcance: number }[];
           regions?: RegionTableRow[];

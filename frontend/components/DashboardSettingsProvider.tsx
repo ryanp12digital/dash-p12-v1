@@ -64,7 +64,7 @@ export function DashboardSettingsProvider({ children }: { children: ReactNode })
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/exchange-rate")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/exchange-rate`)
       .then((r) => r.json())
       .then((d: { rate?: number }) => {
         if (cancelled) return;

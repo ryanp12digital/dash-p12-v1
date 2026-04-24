@@ -52,7 +52,7 @@ export function MetaAdsDataProvider({ children }: { children: ReactNode }) {
       setAccountsLoading(true);
       setAccountsError(null);
       try {
-        const res = await fetch("/api/meta/ad-accounts");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meta/ad-accounts`);
         const data = (await res.json()) as { accounts?: MetaAdAccountOption[]; error?: string; code?: string };
         if (!res.ok) {
           if (res.status === 501) {
@@ -108,7 +108,7 @@ export function MetaAdsDataProvider({ children }: { children: ReactNode }) {
           until: dateTo,
           compare: compareWithPrevious ? "1" : "0",
         });
-        const res = await fetch(`/api/meta/insights?${params.toString()}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meta/insights?${params.toString()}`);
         const data = (await res.json()) as { kpiRows?: MetaKpiRow[]; error?: string };
         if (!res.ok) throw new Error(data.error ?? res.statusText);
         if (cancelled) return;

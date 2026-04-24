@@ -106,7 +106,7 @@ function AdLightbox({ ad, onClose }: { ad: LightboxAd; onClose: () => void }) {
       setCompareData(null);
       try {
         const params = new URLSearchParams({ adId: ad.id, since1, until1, since2, until2 });
-        const res = await fetch(`/api/meta/ad-compare?${params}`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meta/ad-compare?${params}`);
         const json = await res.json();
         if (cancelled) return;
         if (!res.ok) throw new Error(json.error ?? res.statusText);
@@ -553,7 +553,7 @@ export default function MetaFeaturedAdsTable() {
             until: dateTo,
             limit,
           });
-          const res = await fetch(`/api/meta/featured-ads?${params.toString()}`);
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meta/featured-ads?${params.toString()}`);
           const data = (await res.json()) as { ads?: typeof metaFeaturedAds; error?: string };
           if (cancelled) return;
           if (!res.ok) throw new Error(data.error ?? res.statusText);
