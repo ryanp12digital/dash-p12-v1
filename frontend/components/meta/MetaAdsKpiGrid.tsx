@@ -34,8 +34,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-const cardHover =
-  "transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md";
+const cardHover = "transition-[border-color,box-shadow] duration-200 ease-out";
 
 function trendVisual(row: MetaKpiRow): "good" | "bad" | "neutral" {
   if (!row.showTrend || row.goodWhen === "neutral") return "neutral";
@@ -115,20 +114,20 @@ function MetaKpiCard({ row, i, wide }: { row: MetaKpiRow; i: number; wide: boole
 
   return (
     <div
-      className={`group relative flex min-h-[164px] flex-col justify-between overflow-hidden rounded-2xl border border-neutral-800/60 bg-neutral-900/30 p-5 backdrop-blur-md ${cardHover} ${wideClass}`}
+      className={`group relative flex min-h-[164px] flex-col justify-between overflow-hidden dashboard-card p-5 ${cardHover} ${wideClass}`}
       style={{
         animation: `metaKpiUp 0.4s ease both`,
         animationDelay: `${i * 28}ms`,
       }}
     >
       <div className="mb-4 flex items-start justify-center gap-1.5">
-        <h3 className="min-w-0 flex-1 truncate text-center text-xs font-medium leading-snug tracking-widest text-neutral-500 uppercase">
+        <h3 className="min-w-0 flex-1 truncate text-center text-xs font-medium leading-snug tracking-widest text-(--text-muted) uppercase">
           {t(row.labelKey)}
         </h3>
       </div>
 
       <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2">
-        <p className="text-4xl leading-none font-light tracking-tight text-neutral-100">{main}</p>
+        <p className="text-4xl leading-none font-light tracking-tight text-(--text-primary)">{main}</p>
         <span
           className={`inline-flex shrink-0 items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-semibold ${pillClass}`}
           style={{ visibility: hasTrend ? "visible" : "hidden" }}
@@ -150,8 +149,8 @@ function MetaKpiCard({ row, i, wide }: { row: MetaKpiRow; i: number; wide: boole
         </span>
       </div>
 
-      <p className="mt-3 text-xs text-neutral-500" style={{ visibility: showPrev ? "visible" : "hidden" }}>
-        <span className="font-medium text-neutral-600">{t("meta.prevPeriodLine")} </span>
+      <p className="mt-3 text-xs text-(--text-secondary)" style={{ visibility: showPrev ? "visible" : "hidden" }}>
+        <span className="font-medium text-(--text-muted)">{t("meta.prevPeriodLine")} </span>
         {prevFormatted}
       </p>
     </div>
@@ -337,28 +336,28 @@ export default function MetaAdsKpiGrid() {
   return (
     <div className={DASHBOARD_SECTION_STACK_CLASS}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-base font-semibold text-[#0f172a]">{t("meta.kpiLayoutTitle")}</div>
+        <div className="text-base font-semibold text-(--text-primary)">{t("meta.kpiLayoutTitle")}</div>
         <button
           type="button"
           onClick={() => setEditorOpen((o) => !o)}
-          className="cursor-pointer inline-flex items-center gap-2 rounded-xl border border-[#e2e8f0] bg-white px-3 py-2 text-sm font-semibold text-[#0f172a] hover:bg-[#f8fafc]"
+          className="cursor-pointer inline-flex items-center gap-2 rounded-xl border border-(--border) bg-(--surface) px-3 py-2 text-sm font-semibold text-(--text-primary) transition-colors hover:border-(--border-accent)"
         >
-          <SlidersHorizontal className="h-4 w-4 text-[#0729cf]" aria-hidden />
+          <SlidersHorizontal className="h-4 w-4 text-(--accent)" aria-hidden />
           {t("meta.kpiLayoutEdit")}
         </button>
       </div>
 
       {editorOpen && (
-        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-4 shadow-xl">
+        <div className="dashboard-card rounded-2xl border p-4 shadow-[var(--shadow-card)]">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div>
-              <div className="text-sm font-semibold text-[#0f172a]">{t("meta.kpiLayoutEditorTitle")}</div>
-              <div className="mt-1 text-xs text-[#64748b]">{t("meta.kpiLayoutEditorHint")}</div>
+              <div className="text-sm font-semibold text-(--text-primary)">{t("meta.kpiLayoutEditorTitle")}</div>
+              <div className="mt-1 text-xs text-(--text-muted)">{t("meta.kpiLayoutEditorHint")}</div>
             </div>
             <button
               type="button"
               onClick={() => setEditorOpen(false)}
-              className="cursor-pointer rounded-lg border border-[#e2e8f0] bg-white p-2 text-[#64748b] hover:bg-[#f8fafc]"
+              className="cursor-pointer rounded-lg border border-(--border) bg-(--surface-elevated) p-2 text-(--text-muted) hover:text-(--text-primary)"
               aria-label={t("meta.kpiLayoutClose")}
               title={t("meta.kpiLayoutClose")}
             >
@@ -370,14 +369,14 @@ export default function MetaAdsKpiGrid() {
             <button
               type="button"
               onClick={selectAll}
-              className="cursor-pointer rounded-lg border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-semibold text-[#64748b] hover:bg-[#f8fafc]"
+              className="cursor-pointer rounded-lg border border-(--border) bg-(--surface-elevated) px-3 py-2 text-xs font-semibold text-(--text-secondary) hover:text-(--text-primary)"
             >
               {t("meta.kpiLayoutSelectAll")}
             </button>
             <button
               type="button"
               onClick={clearAll}
-              className="cursor-pointer rounded-lg border border-[#e2e8f0] bg-white px-3 py-2 text-xs font-semibold text-[#64748b] hover:bg-[#f8fafc]"
+              className="cursor-pointer rounded-lg border border-(--border) bg-(--surface-elevated) px-3 py-2 text-xs font-semibold text-(--text-secondary) hover:text-(--text-primary)"
             >
               {t("meta.kpiLayoutClearAll")}
             </button>
@@ -394,18 +393,20 @@ export default function MetaAdsKpiGrid() {
                   <div
                     key={row.id}
                     className={`flex items-center justify-between gap-3 rounded-xl border px-3 py-2 ${
-                      enabled ? "border-[#0729cf]/25 bg-[#0729cf]/5" : "border-[#f1f5f9] bg-[#f8fafc]/50"
+                      enabled
+                        ? "border-(--border-accent) bg-(--accent-soft)"
+                        : "border-(--border) bg-(--surface-elevated)/50"
                     }`}
                   >
-                    <label className="flex min-w-0 flex-1 items-center gap-2 text-sm text-[#0f172a]">
+                    <label className="flex min-w-0 flex-1 items-center gap-2 text-sm text-(--text-primary)">
                       <input
                         type="checkbox"
                         checked={enabled}
                         onChange={() => toggleId(row.id)}
-                        className="h-4 w-4 rounded border-[#cbd5e1] text-[#0729cf] accent-[#0729cf] focus:ring-[#0729cf]"
+                        className="h-4 w-4 rounded border-(--border) text-(--accent) accent-(--accent) focus:ring-(--accent)"
                       />
                       {order != null && (
-                        <span className="shrink-0 rounded-full bg-[#0729cf]/10 px-2 py-0.5 text-[11px] font-semibold text-[#0729cf]">
+                        <span className="shrink-0 rounded-full bg-(--accent-soft) px-2 py-0.5 text-[11px] font-semibold text-(--accent)">
                           #{order}
                         </span>
                       )}
@@ -425,7 +426,7 @@ export default function MetaAdsKpiGrid() {
                             ? { animation: "metaKpiMoveUp 280ms ease-out", willChange: "transform" }
                             : undefined
                         }
-                        className="cursor-pointer rounded-lg border border-[#e2e8f0] bg-white px-2 py-1 text-xs font-semibold text-[#64748b] disabled:cursor-not-allowed disabled:opacity-40"
+                        className="cursor-pointer rounded-lg border border-(--border) bg-(--surface-elevated) px-2 py-1 text-xs font-semibold text-(--text-secondary) disabled:cursor-not-allowed disabled:opacity-40"
                         aria-label={t("meta.kpiLayoutMoveUp")}
                         title={t("meta.kpiLayoutMoveUp")}
                       >
@@ -443,7 +444,7 @@ export default function MetaAdsKpiGrid() {
                             ? { animation: "metaKpiMoveDown 280ms ease-out", willChange: "transform" }
                             : undefined
                         }
-                        className="cursor-pointer rounded-lg border border-[#e2e8f0] bg-white px-2 py-1 text-xs font-semibold text-[#64748b] disabled:cursor-not-allowed disabled:opacity-40"
+                        className="cursor-pointer rounded-lg border border-(--border) bg-(--surface-elevated) px-2 py-1 text-xs font-semibold text-(--text-secondary) disabled:cursor-not-allowed disabled:opacity-40"
                         aria-label={t("meta.kpiLayoutMoveDown")}
                         title={t("meta.kpiLayoutMoveDown")}
                       >
@@ -454,7 +455,7 @@ export default function MetaAdsKpiGrid() {
                         type="button"
                         disabled={!enabled}
                         onClick={() => toggleWide(row.id)}
-                        className="cursor-pointer rounded-lg border border-[#e2e8f0] bg-white px-2 py-1 text-xs font-semibold text-[#64748b] disabled:cursor-not-allowed disabled:opacity-40"
+                        className="cursor-pointer rounded-lg border border-(--border) bg-(--surface-elevated) px-2 py-1 text-xs font-semibold text-(--text-secondary) disabled:cursor-not-allowed disabled:opacity-40"
                         aria-label={wideById[row.id] ? "Diminuir largura" : "Aumentar largura"}
                         title={wideById[row.id] ? "Diminuir largura" : "Aumentar largura"}
                       >
@@ -470,7 +471,7 @@ export default function MetaAdsKpiGrid() {
       )}
 
       {selectedRows.length === 0 ? (
-        <div className="rounded-2xl border border-[#e2e8f0] bg-white p-6 text-sm text-[#64748b]">
+        <div className="dashboard-card rounded-2xl border p-6 text-sm text-(--text-muted)">
           {t("meta.kpiLayoutNoneSelected")}
         </div>
       ) : (

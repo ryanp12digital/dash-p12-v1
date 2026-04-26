@@ -28,7 +28,7 @@ export default function MetaAdAccountSelect() {
 
   if (hasTokenConfigured === false) {
     return (
-      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+      <div className="rounded-xl border border-(--border-accent) bg-(--accent-soft) px-4 py-3 text-sm text-(--text-secondary)">
         {t("meta.adAccountsNoToken")}
       </div>
     );

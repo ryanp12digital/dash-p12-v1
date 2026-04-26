@@ -23,11 +23,11 @@ router = APIRouter()
 # ── helpers ──────────────────────────────────────────────────────────────────
 
 def _get_token() -> str:
-    token = os.getenv("META_USER_ACCESS_TOKEN", "").strip()
+    token = (os.getenv("META_USER_ACCESS_TOKEN") or os.getenv("META_ACCESS_TOKEN") or "").strip()
     if not token:
         raise HTTPException(
             status_code=501,
-            detail={"error": "META_USER_ACCESS_TOKEN não configurado", "code": "missing_token"},
+            detail={"error": "META_USER_ACCESS_TOKEN ou META_ACCESS_TOKEN não configurado", "code": "missing_token"},
         )
     return token
 

@@ -326,10 +326,10 @@ export default function MetaAdsChartsSection() {
 
       <ChartCard titleKey="meta.chartReachImpressionsGender" subtitle={t("meta.chartGenderSubtitle")}>
         {hasTokenConfigured === false && (
-          <p className="mb-3 text-center text-xs text-amber-200/90">{t("meta.audienceRequiresToken")}</p>
+          <p className="mb-3 text-center text-xs text-(--text-secondary)">{t("meta.audienceRequiresToken")}</p>
         )}
         {audiencePartialErrors?.gender && (
-          <p className="mb-3 text-center text-xs text-amber-200/90">{audiencePartialErrors.gender}</p>
+          <p className="mb-3 text-center text-xs text-(--text-secondary)">{audiencePartialErrors.gender}</p>
         )}
         <div className={audienceLoading ? "pointer-events-none opacity-50" : ""}>
         <ResponsiveContainer width="100%" height={300}>
@@ -380,10 +380,10 @@ export default function MetaAdsChartsSection() {
           <h3 className="text-base font-medium tracking-tight text-neutral-200">{t("meta.tableRegionsTitle")}</h3>
           <p className="mt-1 text-xs font-light text-neutral-500">{t("meta.tableRegionsSubtitle")}</p>
           {hasTokenConfigured === false && (
-            <p className="mt-2 text-xs text-amber-200/90">{t("meta.audienceRequiresToken")}</p>
+            <p className="mt-2 text-xs text-(--text-secondary)">{t("meta.audienceRequiresToken")}</p>
           )}
           {audiencePartialErrors?.region && (
-            <p className="mt-2 text-xs text-amber-200/90">{audiencePartialErrors.region}</p>
+            <p className="mt-2 text-xs text-(--text-secondary)">{audiencePartialErrors.region}</p>
           )}
         </div>
         <div

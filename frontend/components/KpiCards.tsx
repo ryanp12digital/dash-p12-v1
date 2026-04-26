@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { kpiData, type KpiRow, type KpiPlatform } from "@/lib/data";
+import MicroSparkline from "@/components/dashboard/MicroSparkline";
+import { buildComparisonDailySeries } from "@/lib/sparkline-comparison";
 import { TrendingUp, TrendingDown, Minus, GripVertical } from "lucide-react";
 import { IconMeta, IconGoogleAds, IconFacebook, IconInstagram } from "@/components/platform-icons";
 import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
@@ -27,9 +29,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const cardBase =
-  "group relative flex min-h-[164px] flex-col justify-between overflow-hidden rounded-2xl border border-[rgba(100,95,120,0.28)] bg-[rgba(16,15,26,0.92)] p-5 transition-[border-color,box-shadow,transform] duration-300 ease-out";
-const cardHover =
-  "hover:-translate-y-0.5 hover:border-[rgba(232,160,32,0.20)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.36),0_0_24px_rgba(232,160,32,0.07)]";
+  "group relative flex min-h-[164px] flex-col justify-between overflow-hidden dashboard-card p-5";
+const cardHover = "";
 
 function formatChangePct(pct: number, intlLocale: string): string {
   if (pct === 0) return "0%";
@@ -46,7 +47,7 @@ function PlatformIcons({ platforms }: { platforms: KpiPlatform[] }) {
       {platforms.map((p) => (
         <span
           key={p}
-          className="flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-700 bg-neutral-900/60"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-(--border) bg-(--surface-elevated)"
           aria-hidden
         >
           {p === "meta" && <IconMeta className="h-5 w-5 text-[#0668E1]" />}
@@ -62,6 +63,11 @@ function PlatformIcons({ platforms }: { platforms: KpiPlatform[] }) {
 function KpiCardContent({ kpi }: { kpi: KpiRow }) {
   const { t, intlLocale, formatCount, formatMoneyFromUsd } = useDashboardSettings();
   const { compareWithPrevious } = useOverviewScope();
+
+  const compareSeries = useMemo(
+    () => buildComparisonDailySeries(kpi.current, kpi.prev, 7),
+    [kpi.current, kpi.prev],
+  );
 
   const main =
     kpi.kind === "count"
@@ -80,26 +86,33 @@ function KpiCardContent({ kpi }: { kpi: KpiRow }) {
       ? "bg-emerald-950/70 text-emerald-400 border border-emerald-800/40"
       : kpi.tone === "down"
         ? "bg-rose-950/70 text-rose-400 border border-rose-800/40"
-        : "bg-neutral-900/60 text-[#6A6358] border border-[rgba(100,95,120,0.30)]";
+        : "bg-(--surface-elevated) text-(--text-muted) border border-(--border)";
 
   return (
     <>
       {/* Linha de acento âmbar visível no hover */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(232,160,32,0.50)] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-(--accent) to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-30" />
 
       <div className="mb-4 flex items-start gap-2">
-        <h3 className="min-w-0 flex-1 truncate text-[10px] font-semibold leading-snug tracking-[0.14em] text-[#6A6358] uppercase">
+        <h3 className="min-w-0 flex-1 truncate text-[10px] font-semibold leading-snug tracking-[0.14em] text-(--text-muted) uppercase">
           {t(kpi.labelKey)}
         </h3>
       </div>
 
       <PlatformIcons platforms={kpi.platforms} />
 
-      <p className="font-data mt-1 text-4xl leading-none font-light tracking-tight text-[#EDE8DE]">{main}</p>
+      <p className="font-data mt-1 text-4xl leading-none font-light tracking-tight text-(--text-primary)">{main}</p>
+
+      {compareWithPrevious && (
+        <MicroSparkline
+          values={compareSeries.current}
+          previousValues={compareSeries.previous}
+        />
+      )}
 
       {compareWithPrevious && (
         <>
-          <div className="mt-2">
+          <div className="mt-1">
             <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${pillClass}`}>
               {kpi.tone === "up" && <TrendingUp className="h-3.5 w-3.5" aria-hidden />}
               {kpi.tone === "down" && <TrendingDown className="h-3.5 w-3.5" aria-hidden />}
@@ -107,8 +120,8 @@ function KpiCardContent({ kpi }: { kpi: KpiRow }) {
               {pct}
             </span>
           </div>
-          <p className="mt-3 text-xs text-[#6A6358]">
-            <span className="font-medium text-[#6A6358]">{t("overview.prevPeriodValue")}: </span>
+          <p className="mt-3 text-xs text-(--text-secondary)">
+            <span className="font-medium text-(--text-secondary)">{t("overview.prevPeriodValue")}: </span>
             {prevFormatted}
           </p>
         </>
@@ -128,7 +141,7 @@ function SortableKpiCard({ kpi, i }: { kpi: KpiRow; i: number }) {
     animation: isDragging ? undefined : `kpiSlideUp 0.45s ease both`,
     animationDelay: isDragging ? undefined : `${i * 40}ms`,
     boxShadow: isDragging
-      ? "0 12px 36px rgba(0,0,0,0.40), 0 4px 16px rgba(232,160,32,0.10)"
+      ? "0 12px 36px rgba(0,0,0,0.40), 0 4px 16px rgba(53,115,230,0.12)"
       : "0 1px 3px rgba(0,0,0,0.08), 0 2px 12px rgba(0,0,0,0.06)",
     opacity: isDragging ? 0.4 : 1,
     zIndex: isDragging ? 50 : undefined,
@@ -160,7 +173,7 @@ function DragOverlayCard({ kpi }: { kpi: KpiRow }) {
     <div
       className={`${cardBase} rotate-1 scale-105`}
       style={{
-        boxShadow: "0 20px 48px rgba(0,0,0,0.42), 0 8px 20px rgba(232,160,32,0.10)",
+        boxShadow: "0 20px 48px rgba(0,0,0,0.42), 0 8px 20px rgba(53,115,230,0.12)",
       }}
     >
       <KpiCardContent kpi={kpi} />
@@ -245,7 +258,7 @@ function KpiGroup({
   if (!mounted) {
     return (
       <div>
-        <h3 className="mb-3 text-[10px] font-semibold tracking-[0.14em] text-[#6A6358] uppercase">
+        <h3 className="mb-3 text-[10px] font-semibold tracking-[0.14em] text-(--text-muted) uppercase">
           {t(titleKey)}
         </h3>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -261,7 +274,7 @@ function KpiGroup({
 
   return (
     <div>
-      <h3 className="mb-3 text-[10px] font-semibold tracking-[0.14em] text-[#6A6358] uppercase">
+      <h3 className="mb-3 text-[10px] font-semibold tracking-[0.14em] text-(--text-muted) uppercase">
         {t(titleKey)}
       </h3>
       <DndContext

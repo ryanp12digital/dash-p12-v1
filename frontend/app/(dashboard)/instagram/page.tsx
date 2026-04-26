@@ -1,37 +1,7 @@
 "use client";
 
-import DashboardDateCompareToolbar from "@/components/DashboardDateCompareToolbar";
-import DashboardPeriodLegend from "@/components/DashboardPeriodLegend";
-import { useDashboardSettings } from "@/components/DashboardSettingsProvider";
-import { DASHBOARD_PAGE_MAIN_CLASS } from "@/lib/dashboard-layout";
+import InstagramDashboard from "@/components/instagram/InstagramDashboard";
 
 export default function InstagramPage() {
-  const { t } = useDashboardSettings();
-  return (
-    <main className={DASHBOARD_PAGE_MAIN_CLASS}>
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-xs font-semibold tracking-widest text-[#0729cf] uppercase">
-              {t("placeholder.kicker.insta")}
-            </p>
-            <h1 className="text-3xl font-bold tracking-tight text-[#0f172a]">
-              {t("placeholder.insta")}
-            </h1>
-            <p className="mt-2 max-w-xl text-[#64748b]">{t("placeholder.instaBody")}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#64748b]">
-            {t("meta.filtersSectionTitle")}
-          </p>
-          <div className="flex flex-wrap items-center gap-2">
-            <DashboardDateCompareToolbar />
-          </div>
-          <DashboardPeriodLegend />
-        </div>
-      </div>
-    </main>
-  );
+  return <InstagramDashboard />;
 }

@@ -9,7 +9,7 @@ import DashboardTopMenu from "@/components/DashboardTopMenu";
 export default function DashboardShell({ children }: { children: ReactNode }) {
   return (
     <DashboardSettingsProvider>
-      <div className="min-h-screen bg-[var(--background)] pb-24">
+      <div className="min-h-screen bg-(--background) pb-24">
         <DashboardTopMenu />
         <div className="flex min-h-0 min-w-0 flex-col">
           {/* Sem overflow-auto para evitar clipping de dropdowns/tooltips (ex.: calendário) */}

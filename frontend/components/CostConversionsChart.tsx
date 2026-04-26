@@ -23,11 +23,11 @@ const WEEKLY_METRIC_DEFS: {
   family: MetricFamily;
   color: string;
 }[] = [
-  { id: "cost", labelKey: "chart.cost", family: "money", color: "#0729cf" },
-  { id: "conversions", labelKey: "chart.conversions", family: "volume", color: "#38bdf8" },
-  { id: "impressions", labelKey: "chart.impressions", family: "volume", color: "#8b5cf6" },
-  { id: "clicks", labelKey: "chart.clicks", family: "volume", color: "#f59e0b" },
-  { id: "ctr", labelKey: "chart.ctr", family: "rate", color: "#10b981" },
+  { id: "cost", labelKey: "chart.cost", family: "money", color: "#3573E6" },
+  { id: "conversions", labelKey: "chart.conversions", family: "volume", color: "#22D3EE" },
+  { id: "impressions", labelKey: "chart.impressions", family: "volume", color: "#8B5CF6" },
+  { id: "clicks", labelKey: "chart.clicks", family: "volume", color: "#34D399" },
+  { id: "ctr", labelKey: "chart.ctr", family: "rate", color: "#10B981" },
 ];
 
 function familyOf(id: WeeklyMetricId): MetricFamily {
